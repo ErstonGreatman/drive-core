@@ -1,0 +1,251 @@
+[
+  {
+    "id": "skill-athletics",
+    "name": "Athletics",
+    "defaultAttribute": "fitness",
+    "description": "Physical feats requiring both strength and endurance — climbing walls, long-distance jumping, and outrunning others. Uses Fitness by default; uses Intellect when the test is about theoretical knowledge of the subject.",
+    "specializations": ["Rock-Climbing", "Football", "Swimming"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 43"
+  },
+  {
+    "id": "skill-craftsmanship",
+    "name": "Craftsmanship",
+    "defaultAttribute": "fitness",
+    "description": "Creating and repairing physical objects, from simple fixes to large architectural or engineering projects. Uses Charm for works of art, Intellect for mechanical or architectural planning, and Fitness for hands-on practical work. Tests are usually Extended.",
+    "specializations": ["Cooking", "Demolitions", "Poetry"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 43"
+  },
+  {
+    "id": "skill-combat",
+    "name": "Combat",
+    "defaultAttribute": "fitness",
+    "description": "Brute strength, marksmanship, and tactical knowledge. Used for physical confrontations and strategic command. Uses Fitness in direct combat and Intellect for strategic applications.",
+    "specializations": ["Chess", "Swordsmanship", "Revolvers"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 43"
+  },
+  {
+    "id": "skill-deception",
+    "name": "Deception",
+    "defaultAttribute": "charm",
+    "description": "Bluffing, fast-talk, convincing lies, and acting. Uses Charm by default; Intellect for technically elaborate or impersonal scams; Fitness when intimidating with physical harm. The target resists with a Contested Awareness test.",
+    "specializations": ["Disguises", "Threats", "Seduction"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 43"
+  },
+  {
+    "id": "skill-diplomacy",
+    "name": "Diplomacy",
+    "defaultAttribute": "charm",
+    "description": "Sincerely winning someone over — calming, persuading, negotiating, or seducing with genuine intent. Uses Charm almost always; Intellect to overwhelm with information; Fitness only when actually prepared to fight. The target resists with a Contested Willpower test.",
+    "specializations": ["Haggling", "Negotiating Peace Talks", "Philosophical Debates"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 44"
+  },
+  {
+    "id": "skill-finesse",
+    "name": "Finesse",
+    "defaultAttribute": "fitness",
+    "description": "Flexibility and hand-eye coordination over muscle power — pickpocketing, lockpicking, juggling small objects, and tightrope walking. Always uses Fitness. Often combined with other skills in Mixed Tests.",
+    "specializations": ["Escapism", "Lockpicking", "Pickpocketing"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 44"
+  },
+  {
+    "id": "skill-electronics",
+    "name": "Electronics",
+    "defaultAttribute": "intellect",
+    "description": "Operating electronic gadgets of all sorts. Can substitute for other skills when a computer could do the work, though it usually takes more time. Always uses Intellect.",
+    "specializations": ["Communications", "Hardware", "Hacking"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 44"
+  },
+  {
+    "id": "skill-humanities",
+    "name": "Humanities",
+    "defaultAttribute": "intellect",
+    "description": "The social and behavioral sciences — researching subjects, appraising antiques, and applying broad knowledge of history, law, and psychology. Purely theoretical; practical applications require separate skills such as Diplomacy. Always uses Intellect.",
+    "specializations": ["Anthropology", "Law", "Psychology"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 44"
+  },
+  {
+    "id": "skill-investigation",
+    "name": "Investigation",
+    "defaultAttribute": "awareness",
+    "description": "Gathering information and filtering truth from noise — noticing hidden things, following evidence trails, and asking around. Takes time and involves trial and error, unlike Diplomacy. Always uses Awareness.",
+    "specializations": ["Crime Scenes", "Interrogation", "Puzzles & Riddles"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 45"
+  },
+  {
+    "id": "skill-presence",
+    "name": "Presence",
+    "defaultAttribute": "charm",
+    "description": "Getting people's attention through performance, speeches, and showmanship. Uses Charm most of the time; Intellect for jargon and buzzwords; Fitness for athletic performances (as a Mixed Test with Finesse).",
+    "specializations": ["Dance", "Speeches", "Technobabble"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 45"
+  },
+  {
+    "id": "skill-medicine",
+    "name": "Medicine",
+    "defaultAttribute": "intellect",
+    "description": "Diagnosing and treating physical and mental illnesses. Can be combined with Craftsmanship for pharmacy work. Always uses Intellect in both theoretical and practical applications.",
+    "specializations": ["Diagnostics", "Forensics", "Veterinary"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 45"
+  },
+  {
+    "id": "skill-sciences",
+    "name": "Sciences",
+    "defaultAttribute": "intellect",
+    "description": "The hard sciences — solving mathematical problems, identifying rare species, and recalling technical knowledge. Always uses Intellect.",
+    "specializations": ["Astronomy", "Zoology", "Physics"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 45"
+  },
+  {
+    "id": "skill-stealth",
+    "name": "Stealth",
+    "defaultAttribute": "fitness",
+    "description": "Concealing yourself, shadowing others, and moving without being detected. A character cannot disappear from view without actually hiding first. Always uses Fitness. Often used in Mixed Tests alongside the action being taken stealthily.",
+    "specializations": ["Camouflage", "Crowds", "Shadowing", "Silent Movement", "Smuggling Small Objects"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 46"
+  },
+  {
+    "id": "skill-survival",
+    "name": "Survival",
+    "defaultAttribute": "awareness",
+    "description": "Fending for yourself without modern comforts — finding food and shelter, navigating by the sky, and handling wild animals. Uses Awareness by default; Charm when pacifying animals.",
+    "specializations": ["Animal Handling", "Hunting & Foraging", "Navigation"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 46"
+  },
+  {
+    "id": "skill-vehicles",
+    "name": "Vehicles",
+    "defaultAttribute": "fitness",
+    "description": "Operating all vehicles that aren't mecha — sailing, flying, and driving — as well as performing maintenance on them. Uses Fitness when operating and Intellect for garage work and repairs.",
+    "specializations": ["Helicopters", "Motorcycles", "Tanks"],
+    "isMiracle": false,
+    "sourcePageRef": "BCG-R p. 46"
+  },
+  {
+    "id": "skill-electricity",
+    "name": "Electricity",
+    "defaultAttribute": "intellect",
+    "description": "Controls electricity — recharging devices, operating computers with a thought, and throwing lightning bolts. All uses require line of sight. Uses Fitness for Offensive Tests and Intellect for all other uses. Can enhance Electronics tests with one Advantage.",
+    "specializations": ["Offensive Tests", "Electronics Tests", "Charging Devices or the Atmosphere"],
+    "isMiracle": true,
+    "isOffensiveMiracle": true,
+    "sourcePageRef": "BCG-R p. 47"
+  },
+  {
+    "id": "skill-force",
+    "name": "Force",
+    "defaultAttribute": "fitness",
+    "description": "Controls kinetic forces and local gravity — calling weapons to hand, pinning targets, flying, and deflecting attacks. Affects targets within line of sight. All uses revolve around Fitness. Can be used defensively as a Maneuver Action, inflicting one Disadvantage to attackers per multiple of 5 met.",
+    "specializations": ["Offensive Tests", "Manipulating Inorganic Matter", "Affecting Living Creatures"],
+    "isMiracle": true,
+    "isOffensiveMiracle": true,
+    "sourcePageRef": "BCG-R p. 47"
+  },
+  {
+    "id": "skill-fortune",
+    "name": "Fortune",
+    "defaultAttribute": "resources",
+    "description": "Manipulates the threads of fate for subtle but powerful results — finding rare items, catching people at the perfect moment, and uncovering exactly what is needed. Enhances Resources tests with one Advantage and makes them Miracle Tests. Does not require an Action to activate. A success does not impose Disadvantages on further Resources tests this Episode.",
+    "specializations": ["Equipment Tests", "Information Gathering", "Hiring Someone Else's Services"],
+    "isMiracle": true,
+    "sourcePageRef": "BCG-R p. 48"
+  },
+  {
+    "id": "skill-life",
+    "name": "Life",
+    "defaultAttribute": "awareness",
+    "description": "Senses the presence and general location of living beings within a wide area (one type of animal life per test), and transfers life essence through touch to heal others. Uses Awareness for detection and Intellect when healing alongside Medicine. Cannot be used to heal oneself.",
+    "specializations": ["Awareness Tests", "Medicine Tests", "A Specific Kind of Animal Life"],
+    "isMiracle": true,
+    "sourcePageRef": "BCG-R p. 48"
+  },
+  {
+    "id": "skill-matter",
+    "name": "Matter",
+    "defaultAttribute": "intellect",
+    "description": "Reshapes solid objects through touch — reinforcing doors, sharpening blades, or breaking down materials. Uses Intellect. Enhances Craftsmanship tests with one Advantage and can reduce Extended Test time at the cost of Disadvantages. Cannot affect living beings; destroys electronics.",
+    "specializations": ["Craftsmanship Tests", "Destroying Objects", "Improving Objects"],
+    "isMiracle": true,
+    "sourcePageRef": "BCG-R p. 48"
+  },
+  {
+    "id": "skill-phantasm",
+    "name": "Phantasm",
+    "defaultAttribute": "awareness",
+    "description": "Crafts convincing illusions implanted directly into victims' senses, projected within line of sight. Uses Awareness, tested against targets' Defense. Can be used offensively at a Disadvantage (dealing damage as an Offensive Test) or defensively as a Maneuver Action, inflicting one Disadvantage to attackers per multiple of 5 met.",
+    "specializations": ["Offensive Tests", "Defensive Tests", "Self Disguises/Invisibility"],
+    "isMiracle": true,
+    "isOffensiveMiracle": true,
+    "sourcePageRef": "BCG-R p. 49"
+  },
+  {
+    "id": "skill-phasing",
+    "name": "Phasing",
+    "defaultAttribute": "fitness",
+    "description": "Turns the user partially insubstantial, allowing passage through solid objects and near-immunity to threats. The user controls which parts are substantial. Uses Fitness. Can enhance a Combat attack with one Advantage, or be used defensively as a Maneuver Action, inflicting one Disadvantage to attackers per multiple of 5 met (cannot protect allies).",
+    "specializations": ["Offensive Tests", "Defensive Tests", "Passing Through Inert Objects"],
+    "isMiracle": true,
+    "isOffensiveMiracle": true,
+    "sourcePageRef": "BCG-R p. 49"
+  },
+  {
+    "id": "skill-portal",
+    "name": "Portal",
+    "defaultAttribute": "awareness",
+    "description": "Opens wormholes in spacetime between two preset locations, or creates a pocket dimension to hide objects or deflect attacks. Always uses Awareness. Windows must be set by pressing hands against solid non-living surfaces and are destroyed if the surface is. No more than two Windows active at once. Can be used defensively as a Maneuver Action.",
+    "specializations": ["Setting Windows", "Pocket Dimensions", "Defensive Tests"],
+    "isMiracle": true,
+    "sourcePageRef": "BCG-R p. 50"
+  },
+  {
+    "id": "skill-probing",
+    "name": "Probing",
+    "defaultAttribute": "charm",
+    "description": "Reads and influences minds — sending telepathic messages, reading surface thoughts, and planting suggestions. Requires line of sight. Uses Charm for telepathy and suggestion; Awareness to read surface thoughts. Repeated or unsubtle use can make the target suspicious and intuitively aware of the intrusion.",
+    "specializations": ["Telepathy", "Mind Reading", "Suggestion"],
+    "isMiracle": true,
+    "sourcePageRef": "BCG-R p. 50"
+  },
+  {
+    "id": "skill-sight",
+    "name": "Sight",
+    "defaultAttribute": "awareness",
+    "description": "Extra Sensory Perception that provides subtle warnings of danger and enhances intuition — perhaps felt as pressure, a ringing bell, or a recalled dream. Adds one Advantage to any Awareness test and makes it a Miracle Test. Does not require an Action to activate.",
+    "specializations": ["General Skill Tests", "Miracle Skill Tests", "Unskilled Awareness Tests"],
+    "isMiracle": true,
+    "sourcePageRef": "BCG-R p. 51"
+  },
+  {
+    "id": "skill-somatics",
+    "name": "Somatics",
+    "defaultAttribute": "fitness",
+    "description": "Supercharges the body with superhuman power — punching through concrete, outrunning vehicles, and shooting blind. Adds one Advantage to any Fitness test and makes it a Miracle Test. Does not require an Action to activate.",
+    "specializations": ["Offensive Tests", "General Skill Tests", "Miracle Skill Tests"],
+    "isMiracle": true,
+    "isOffensiveMiracle": true,
+    "sourcePageRef": "BCG-R p. 51"
+  },
+  {
+    "id": "skill-temperature",
+    "name": "Temperature",
+    "defaultAttribute": "charm",
+    "description": "Controls thermal forces around the user — heating or cooling the environment and objects, and burning or freezing enemies. Uses Charm. Requires an oxygen-containing environment; Offensive Tests in improper environments suffer a Disadvantage. The emotional state of the user affects whether heat or cold comes more easily.",
+    "specializations": ["Offensive Tests", "Cold", "Heat"],
+    "isMiracle": true,
+    "isOffensiveMiracle": true,
+    "sourcePageRef": "BCG-R p. 51"
+  }
+]

@@ -1,0 +1,45 @@
+[
+  {
+    "id": "mecha-balanced-unit",
+    "name": "Balanced Unit",
+    "description": "A well-rounded general-purpose combat frame suitable for most engagements.",
+    "attributes": {
+      "might": 3,
+      "energy": 3,
+      "guard": 3,
+      "systems": 2,
+      "threshold": 3,
+      "speed": 2
+    },
+    "weapons": [
+      { "templateId": "weapon-beam-rifle", "area": "arms" },
+      { "templateId": "weapon-beam-saber", "area": "arms" }
+    ],
+    "upgrades": [
+      { "templateId": "upgrade-reinforced-frame", "area": "torso" },
+      { "templateId": "upgrade-sensor-array", "area": "head" }
+    ],
+    "sourcePageRef": "TBD"
+  },
+  {
+    "id": "mecha-fast-assault",
+    "name": "Fast Assault",
+    "description": "A high-speed close-combat frame built for aggressive offensive pressure.",
+    "attributes": {
+      "might": 4,
+      "energy": 2,
+      "guard": 2,
+      "systems": 1,
+      "threshold": 3,
+      "speed": 4
+    },
+    "weapons": [
+      { "templateId": "weapon-beam-saber", "area": "arms" },
+      { "templateId": "weapon-pile-bunker", "area": "arms" }
+    ],
+    "upgrades": [
+      { "templateId": "upgrade-booster-pack", "area": "legs" }
+    ],
+    "sourcePageRef": "TBD"
+  }
+]

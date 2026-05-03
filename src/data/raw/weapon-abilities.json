@@ -1,0 +1,107 @@
+[
+  {
+    "id": "conditional-advantage",
+    "name": "Conditional Advantage",
+    "description": "This weapon gains an Advantage to its Might Test when a specific condition defined during creation is met. The condition must be tied to a concrete, verifiable game state—examples include targeting a specific faction, having an Attribute higher than the target's, or having lost two or more Threshold Levels.",
+    "wpCost": 2,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "innate-advantage",
+    "name": "Innate Advantage",
+    "description": "This weapon always gains an Advantage to its Might Test. Requires the weapon to have at least one drawback (an ability with a negative WP cost: Slow, One Shot, Unreliable, or Overheating).",
+    "wpCost": 2,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "additional-disadvantage-when-suppressing",
+    "name": "Additional Disadvantage when Suppressing",
+    "description": "When this weapon successfully uses the Suppress Action, the target suffers an additional Disadvantage to their rolls (two Disadvantages total instead of one) until your next Turn.",
+    "wpCost": 2,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "long-range",
+    "name": "Long Range",
+    "description": "This weapon gains the Long Range keyword. Its Maximum Range increases by an amount equal to your Systems beyond the norm for other Melee or Shooting Weapons. When you take the Aim Action with this weapon, its Maximum Range increases by an additional 5 Zones.",
+    "wpCost": 1,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "blast-1",
+    "name": "Blast (1)",
+    "description": "This weapon gains the Blast keyword with a radius of 1 Zone. It targets a Zone or Enemy and makes a single Might Test against all units within 1 Zone of the target. Does not differentiate between friend or foe, but will not cause you to attack yourself. Exclusive with Blast (2), Blast (3), and Line.",
+    "wpCost": 1,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "blast-2",
+    "name": "Blast (2)",
+    "description": "This weapon gains the Blast keyword with a radius of 2 Zones. It targets a Zone or Enemy and makes a single Might Test against all units within 2 Zones of the target. Does not differentiate between friend or foe, but will not cause you to attack yourself. Exclusive with Blast (1), Blast (3), and Line.",
+    "wpCost": 2,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "blast-3",
+    "name": "Blast (3)",
+    "description": "This weapon gains the Blast keyword with a radius of 3 Zones. It targets a Zone or Enemy and makes a single Might Test against all units within 3 Zones of the target. Does not differentiate between friend or foe, but will not cause you to attack yourself. Exclusive with Blast (1), Blast (2), and Line.",
+    "wpCost": 3,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "line",
+    "name": "Line",
+    "description": "This weapon gains the Line keyword. It targets a Zone or Enemy and makes a single Might Test against all units in a line extending from you towards the target until the end of the weapon's Range. Does not differentiate between friend or foe, but will not attack you. Exclusive with Blast (1), Blast (2), and Blast (3).",
+    "wpCost": 1,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "crippling",
+    "name": "Crippling",
+    "description": "This weapon gains the Crippling keyword. It always has the benefits of the Suppress Action but without the penalty to Damage. If the enemy chooses to Move, they suffer Damage equal to the distance Moved.",
+    "wpCost": 4,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "slow",
+    "name": "Slow",
+    "description": "Drawback. This weapon gains the Slow keyword. It can only be fired once every two Rounds and cannot be used two Turns in a row. Exclusive with One Shot.",
+    "wpCost": -2,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "one-shot",
+    "name": "One Shot",
+    "description": "Drawback. This weapon gains the One Shot keyword. It may only be fired once per Operation. Exclusive with Slow.",
+    "wpCost": -4,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "unreliable",
+    "name": "Unreliable",
+    "description": "Drawback. This weapon gains the Unreliable keyword. If you keep a die roll that results in an odd number when using this weapon, you lose the benefit of Tension to the Might Test.",
+    "wpCost": -4,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "overheating",
+    "name": "Overheating",
+    "description": "Drawback. This weapon gains the Overheating keyword. If you keep a die roll that results in an odd number when using this weapon, you take Damage equal to the Tension bonus after using it.",
+    "wpCost": -4,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "beam",
+    "name": "Beam",
+    "description": "This weapon gains the Beam keyword. Its base Energy cost is 1. All other abilities on this weapon (except Remote) only apply when the weapon is Boosted. The Boost Energy cost equals 1 plus the number of non-negative abilities on the weapon (excluding Beam itself—drawbacks do not count toward this total).",
+    "wpCost": 0,
+    "sourcePageRef": "BCG-R p. 150"
+  },
+  {
+    "id": "remote",
+    "name": "Remote",
+    "description": "This weapon gains the Remote keyword. Custom Remote weapons always have a Guard of 5 and a Speed of 5. Unlike all other abilities on a Beam weapon, Remote applies at all times and is not Boosted-only. Remote Weapons are attack drones that move and attack via remote control, sharing your Might and Systems. They run off your Energy, are destroyed after 1 Damage, and can be repaired by any effect that reloads a One Shot Weapon.",
+    "wpCost": 0,
+    "sourcePageRef": "BCG-R p. 150"
+  }
+]

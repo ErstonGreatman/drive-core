@@ -1,0 +1,86 @@
+[
+  {
+    "id": "melee",
+    "name": "Melee",
+    "description": "Close quarter weapons in giant robot form. Melee Weapons gain an Advantage when used to Engage in a Duel or against a target that is in one. They have a minimum Range of 0 and a Maximum Range of 1.",
+    "sourcePageRef": "BCG-R p. 98"
+  },
+  {
+    "id": "shooting",
+    "name": "Shooting",
+    "description": "Encompassing all sorts of firearms as well as missile launchers and artillery devices, Shooting Weapons are the best at striking from a distance after taking a moment to adjust your sights. These Weapons have a Minimum Range of 0 and a Maximum Range of 5. When using the Aim Action with a Shooting Weapon, it gains an additional Advantage to the Might Test.",
+    "sourcePageRef": "BCG-R p. 98"
+  },
+  {
+    "id": "beam",
+    "name": "Beam",
+    "description": "The energy-based equivalent of either Melee or Shooting, Beam Weapons can be laser cannons or blades made of heated particles. All Beam Weapons cost 1 point of Energy to use and can be Boosted by spending an optional Energy cost between parentheses. When you Boost a Beam Weapon it gains an Advantage to its Might Test. Sometimes, Boosting them also grants another special ability. You can Boost a Beam Weapon once per Action.",
+    "sourcePageRef": "BCG-R p. 98"
+  },
+  {
+    "id": "blast",
+    "name": "Blast",
+    "description": "Blast Weapons target an individual Zone or an Enemy, then make a single Might Test against all units within X Zones from the target. Blasts do not differentiate between friend or foe, but will not cause you to attack yourself should you be within their blast radius. You still have to deal with any potential secondary effects.",
+    "sourcePageRef": "BCG-R p. 98"
+  },
+  {
+    "id": "burst",
+    "name": "Burst",
+    "description": "Burst Weapons have a long and wide reach around the user. They target an individual Zone or an Enemy, making a single Might Test against all units within Range in a circle around you as far as they can reach. You can attack targets within your same Zone with them, but will not attack yourself. Unlike Blasts or Lines, Bursts don't attack Allies positioned within the area of effect.",
+    "sourcePageRef": "BCG-R p. 98"
+  },
+  {
+    "id": "crippling",
+    "name": "Crippling",
+    "description": "Crippling Weapons always have the benefits of the Suppress Action but without the penalty to Damage. Instead, if the Enemy chooses to Move, they will suffer Damage equal to the distance Moved.",
+    "sourcePageRef": "BCG-R p. 98"
+  },
+  {
+    "id": "line",
+    "name": "Line",
+    "description": "Line Weapons target an individual Zone or an Enemy, making a single Might Test against all units in a line extending from you towards the target until the end of the Weapon's Range. Lines do not differentiate between friend or foe and attack enemies within the same Zone as you, but will not attack you.",
+    "sourcePageRef": "BCG-R p. 99"
+  },
+  {
+    "id": "long-range",
+    "name": "Long Range",
+    "description": "Long Range Weapons strike much farther than others. Increase the Weapon's Maximum Range by an amount equal to your Systems beyond the norm for other Melee or Shooting Weapons. When you take the Aim Action with one of these Weapons, their Maximum Range increases by an additional 5 Zones.",
+    "sourcePageRef": "BCG-R p. 99"
+  },
+  {
+    "id": "technique",
+    "name": "Technique",
+    "description": "Techniques are special attacks that are stronger, but are difficult to pull off and push the machine to its limits. The first time you use a Technique during an Operation, it gains double the benefit from Tension to its Might Test, and increases the maximum bonus to 20. All your Techniques used beyond the first will treat Tension as 0 until the Operation is over.",
+    "sourcePageRef": "BCG-R p. 99"
+  },
+  {
+    "id": "one-shot",
+    "name": "One Shot",
+    "description": "One Shot Weapons may be only fired once per Operation. Some abilities can recharge One Shots after they've been spent, but they can't be \"pre-recharged\" before being used.",
+    "sourcePageRef": "BCG-R p. 99"
+  },
+  {
+    "id": "slow",
+    "name": "Slow",
+    "description": "A Slow Weapon can only be fired once every two Rounds. That means it cannot be used two Turns in a row, but may alternate firing between every other Turn.",
+    "sourcePageRef": "BCG-R p. 99"
+  },
+  {
+    "id": "overheating",
+    "name": "Overheating",
+    "description": "If you keep a die roll that results in an odd number when using this Weapon, you take an amount of Damage yourself equal to the Tension bonus after using it.",
+    "sourcePageRef": "BCG-R p. 99"
+  },
+  {
+    "id": "unreliable",
+    "name": "Unreliable",
+    "description": "If you keep a die roll that results in an odd number when using this Weapon, you lose the benefit of Tension to the Might Test.",
+    "sourcePageRef": "BCG-R p. 99"
+  },
+  {
+    "id": "remote",
+    "name": "Remote",
+    "description": "Remote Weapons are attack drones, capable of moving and attacking on their own via remote control. At the beginning of your Turn you may deploy them in your own Zone, and may retrieve them the same way. Remote Weapons have their own Guard and Speed Attributes, share your Might and Systems and their Threshold and Energy is 0. They run off your own available Energy and are destroyed after taking a single point of Damage. Remote Weapons require your direct control and you must spend your own Actions to attack and move with them. Once destroyed, Remote Weapons can be repaired by any effect that can reload or resupply a One Shot Weapon.",
+    "sourcePageRef": "BCG-R p. 99"
+  }
+]

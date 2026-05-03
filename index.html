@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" href="/favicon.ico" sizes="any" />
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon-180x180.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#4f46e5" />
+    <title>Drive Core</title>
+    <meta name="description" content="A free character and mecha builder for Battle Century G Remastered. Build pilots, kit out mechas, and bring them to the table — all in your browser." />
+
+    <!-- OpenGraph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Drive Core" />
+    <meta property="og:title" content="Drive Core" />
+    <meta property="og:description" content="A free character and mecha builder for Battle Century G Remastered. Build pilots, kit out mechas, and bring them to the table — all in your browser." />
+    <meta property="og:url" content="https://drive-core.app" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Drive Core" />
+    <meta name="twitter:description" content="A free character and mecha builder for Battle Century G Remastered. Build pilots, kit out mechas, and bring them to the table — all in your browser." />
+
+    <script>
+      (function () {
+        var t = localStorage.getItem('drive-core-theme');
+        var html = document.documentElement;
+        html.classList.remove('light', 'dark');
+        if (t === 'light') { html.classList.add('light'); }
+        else if (t === 'dark') { html.classList.add('dark'); }
+      })();
+    </script>
+  </head>
+  <body>
+    <div id="root"></div>
+    <script type="module" src="/src/index.tsx"></script>
+  </body>
+</html>

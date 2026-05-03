@@ -1,0 +1,50 @@
+[
+  {
+    "id": "berserker",
+    "name": "Berserker",
+    "description": "You pilot a giant monster that has been restrained and your control interface can barely keep in check. The fury of the beast within will only cease when all threats to it have been destroyed.",
+    "effect": "As long as there are Enemies remaining on the battlefield, you must take an Offensive Action against the Enemy closest to you during your Turn and attempt to Engage them in a Duel when possible. If there are multiple Enemies at the same distance, you may choose which one to pursue. If you can't reach any Enemies to attack this Turn, you must Aim while approaching the one who is closest.",
+    "mpBonus": 10,
+    "sourcePageRef": "BCG-R p. 97"
+  },
+  {
+    "id": "limited-battery-time",
+    "name": "Limited Battery Time",
+    "description": "This is a prototype so experimental that it cannot run for more than a few minutes at a time. If forced to participate in combat for a long while, its limbs will power down one by one until it can't move anymore.",
+    "effect": "You gain no benefits from Tension. At the beginning of your Turn, if Tension is 5 or higher, you take enough Damage to lose your current Level of Threshold.",
+    "mpBonus": 20,
+    "sourcePageRef": "BCG-R p. 97"
+  },
+  {
+    "id": "walking-coffin",
+    "name": "Walking Coffin",
+    "description": "Your Gear is a fragile little thing. The designers have made it a testbed of every feature they could think of, but apparently forgot to armor it with more than aluminum foil and to fill the tank with something other than explodium.",
+    "effect": "Double all the Damage that you take (after applying Active Defenses).",
+    "mpBonus": 30,
+    "sourcePageRef": "BCG-R p. 97"
+  },
+  {
+    "id": "unarmed",
+    "name": "Unarmed",
+    "description": "This is one of those rare mecha incapable of direct combat. It may be capable of indirect combat, however.",
+    "effect": "You have no Default Weapons, suffer a Disadvantage to all Might Tests and may not participate in Synchro Attacks.",
+    "mpBonus": 10,
+    "sourcePageRef": "BCG-R p. 97"
+  },
+  {
+    "id": "miniature-model",
+    "name": "Miniature Model",
+    "description": "Small Gears emphasize evasive maneuvers, precise attacks and energy efficiency to make up for their lesser mobility and reach. On the plus side, they also make you the cool underdog fighting giants with a tiny machine.",
+    "effect": "Halve all of your Movement, Upgrade and Weapon Ranges. Maximum Weapon Ranges are rounded up instead of down.",
+    "mpBonus": 20,
+    "sourcePageRef": "BCG-R p. 97"
+  },
+  {
+    "id": "precious-snowflake",
+    "name": "Precious Snowflake",
+    "description": "A super prototype full of one-of-a-kind expensive technologies to improve its peak performance at the cost of making the internal systems a mess to work with. When everything goes well, this Gear is a thing of beauty. When things start to go wrong, they usually snowball out of control.",
+    "effect": "You may never ignore the effects of Maiming, can't use Extra Areas and can't gain Upgrades or Weapons through Genre Powers.",
+    "mpBonus": 30,
+    "sourcePageRef": "BCG-R p. 97"
+  }
+]
