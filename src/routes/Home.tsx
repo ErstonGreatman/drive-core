@@ -7,6 +7,8 @@ import type { Pilot, Mecha } from '~/types';
 import { pilotState, createDefaultPilot, addPilot, removePilot } from '../stores/pilots';
 import { mechaState, createDefaultMecha, addMecha, removeMecha } from '../stores/mecha';
 import { parsePilotJSON, parseMechaJSON, slugify } from '../lib/share';
+import { totalCP } from '../lib/pilot-costs';
+import { cn } from '../lib/utils';
 import { ExportMenu } from '../components/ExportMenu';
 import { Button } from '../components/ui/button';
 import { Badge } from '../components/ui/badge';
@@ -43,13 +45,20 @@ interface PilotCardProps {
 
 function PilotCard(props: PilotCardProps): JSX.Element {
   const powerLevel = () => Math.floor(props.pilot.experience / 30);
+  const cpTotal = () => totalCP(props.pilot.experience);
+  const cpAvailable = () => cpTotal() - (props.pilot.spentCP ?? 0);
 
   return (
     <Card>
       <CardHeader>
         <div class="flex items-start justify-between gap-2">
           <CardTitle class="truncate">{props.pilot.name}</CardTitle>
-          <Badge variant="muted" class="shrink-0 font-mono">PL {powerLevel()}</Badge>
+          <div class="flex items-center gap-1 shrink-0">
+            <Badge variant="muted" class="font-mono">PL {powerLevel()}</Badge>
+            <Badge variant="muted" class={cn('font-mono', cpAvailable() < 0 && 'bg-destructive/10 text-destructive')}>
+              {cpAvailable()} / {cpTotal()} CP
+            </Badge>
+          </div>
         </div>
         <Show when={props.pilot.campaignTag}>
           <CardDescription>{props.pilot.campaignTag}</CardDescription>
@@ -89,7 +98,7 @@ function MechaCard(props: MechaCardProps): JSX.Element {
       <CardHeader>
         <div class="flex items-start justify-between gap-2">
           <CardTitle class="truncate">{props.mecha.name}</CardTitle>
-          <Badge variant="muted" class="shrink-0 font-mono">
+          <Badge variant="muted" class={cn('shrink-0 font-mono', availableMP() < 0 && 'bg-destructive/10 text-destructive')}>
             {availableMP()} / {totalMP()} MP
           </Badge>
         </div>

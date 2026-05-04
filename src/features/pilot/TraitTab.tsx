@@ -4,7 +4,7 @@ import type { Pilot, PilotTraitEntry } from '~/types/pilot';
 import { updatePilot } from '~/stores/pilots';
 import { traits, traitsById, skillsById } from '~/data';
 import type { TraitDefinition } from '~/data';
-import { computeSpentCP, totalCP } from '~/lib/pilot-costs';
+import { computeSpentCP } from '~/lib/pilot-costs';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 import { Input } from '~/components/ui/input';
@@ -168,7 +168,6 @@ function TakenTraitCard(props: TakenTraitCardProps): JSX.Element {
 interface TraitRowProps {
   pilot: Pilot;
   def: TraitDefinition;
-  cpAvailable: number;
   alreadyTaken: boolean;
 }
 
@@ -188,8 +187,7 @@ function TraitRow(props: TraitRowProps): JSX.Element {
   }
 
   const canAdd = () =>
-    (props.def.isSpecialist || !props.alreadyTaken) &&
-    props.cpAvailable >= props.def.cpCost;
+    props.def.isSpecialist || !props.alreadyTaken;
 
   const buttonLabel = () => {
     if (justAdded()) { return '✓ Added'; }
@@ -240,17 +238,6 @@ const CATEGORIES = [
 
 export function TraitTab(props: TraitTabProps): JSX.Element {
   const [activeCategory, setActiveCategory] = createSignal<string>('general');
-
-  const cpAvailable = () => {
-    const spent = computeSpentCP(
-      props.pilot.attributes,
-      props.pilot.skills,
-      props.pilot.traits,
-      skillsById,
-      traitsById,
-    );
-    return totalCP(props.pilot.experience) - spent;
-  };
 
   // Build the set of free Deathblow trait IDs (with count handling)
   const freeDeathblowMap = (): Map<string, number> => {
@@ -353,7 +340,6 @@ export function TraitTab(props: TraitTabProps): JSX.Element {
             <TraitRow
               pilot={props.pilot}
               def={def}
-              cpAvailable={cpAvailable()}
               alreadyTaken={takenIds().has(def.id)}
             />
           )}

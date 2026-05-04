@@ -8,7 +8,6 @@ import {
   attributeCostToRank,
   attributeIncrementalCost,
   computeSpentCP,
-  totalCP,
 } from '~/lib/pilot-costs';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
@@ -28,17 +27,6 @@ const ATTRIBUTES: { key: PilotAttributeKey; label: string; description: string }
 ];
 
 export function AttributeTab(props: AttributeTabProps): JSX.Element {
-  function cpAvailable(): number {
-    const spent = computeSpentCP(
-      props.pilot.attributes,
-      props.pilot.skills,
-      props.pilot.traits,
-      skillsById,
-      traitsById,
-    );
-    return totalCP(props.pilot.experience) - spent;
-  }
-
   function attrTotalCost(): number {
     const a = props.pilot.attributes;
     return (
@@ -86,7 +74,7 @@ export function AttributeTab(props: AttributeTabProps): JSX.Element {
           {(attr) => {
             const rank = () => props.pilot.attributes[attr.key];
             const nextCost = () => attributeIncrementalCost(rank());
-            const canIncrease = () => rank() < 10 && cpAvailable() >= nextCost();
+            const canIncrease = () => rank() < 10;
             const canDecrease = () => rank() > 0;
 
             return (

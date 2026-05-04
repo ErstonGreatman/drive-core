@@ -3,7 +3,7 @@ import { For } from 'solid-js';
 import type { Mecha } from '~/types/mecha';
 import type { MechaAttributes } from '~/data';
 import { updateMecha } from '~/stores/mecha';
-import { totalMP, computeSpentMP, attributeCostToRank, attributeIncrementalCost } from '~/lib/mecha-costs';
+import { computeSpentMP, attributeCostToRank, attributeIncrementalCost } from '~/lib/mecha-costs';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 
@@ -23,11 +23,6 @@ const ATTRIBUTE_ROWS: { key: AttrKey; label: string; description: string }[] = [
 ];
 
 export function AttributeTab(props: AttributeTabProps): JSX.Element {
-  const mpAvailable = () => {
-    const spent = computeSpentMP(props.mecha.attributes, props.mecha.weapons, props.mecha.upgrades);
-    return totalMP(props.mecha.bonusMP) - spent;
-  };
-
   function handleIncrement(key: AttrKey): void {
     const current = props.mecha.attributes[key];
     if (current >= 10) { return; }
@@ -50,7 +45,7 @@ export function AttributeTab(props: AttributeTabProps): JSX.Element {
         {(row) => {
           const rank = () => props.mecha.attributes[row.key];
           const nextCost = () => attributeIncrementalCost(rank());
-          const canIncrease = () => rank() < 10 && mpAvailable() >= nextCost();
+          const canIncrease = () => rank() < 10;
 
           return (
             <div class="flex items-center gap-3 py-2.5 border-b border-border/50 last:border-0">

@@ -4,7 +4,7 @@ import type { Mecha, MechaWeapon } from '~/types/mecha';
 import { updateMecha } from '~/stores/mecha';
 import { weaponTemplates, weaponKeywordsById } from '~/data';
 import type { WeaponTemplateDefinition } from '~/data';
-import { totalMP, computeSpentMP } from '~/lib/mecha-costs';
+import { computeSpentMP } from '~/lib/mecha-costs';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 import { Input } from '~/components/ui/input';
@@ -164,7 +164,6 @@ function TakenWeaponCard(props: TakenWeaponCardProps): JSX.Element {
 interface WeaponRowProps {
   mecha: Mecha;
   def: WeaponTemplateDefinition;
-  mpAvailable: number;
 }
 
 function WeaponRow(props: WeaponRowProps): JSX.Element {
@@ -192,8 +191,6 @@ function WeaponRow(props: WeaponRowProps): JSX.Element {
     flashTimer = setTimeout(() => setJustAdded(false), 2000);
   }
 
-  const canAdd = () => props.mpAvailable >= props.def.mpCost;
-
   return (
     <div class="flex items-start gap-3 py-2.5 border-b border-border/50 last:border-0">
       <div class="flex-1 min-w-0">
@@ -208,7 +205,6 @@ function WeaponRow(props: WeaponRowProps): JSX.Element {
         size="sm"
         variant={justAdded() ? 'secondary' : 'outline'}
         class="h-7 px-2 text-xs shrink-0 transition-all"
-        disabled={!canAdd()}
         onClick={handleAdd}
       >
         {justAdded() ? '✓ Added' : '+'}
@@ -222,15 +218,6 @@ function WeaponRow(props: WeaponRowProps): JSX.Element {
 export function WeaponTab(props: WeaponTabProps): JSX.Element {
   const [filter, setFilter] = createSignal<WeaponFilter>('all');
   const [search, setSearch] = createSignal('');
-
-  const mpAvailable = () => {
-    const spent = computeSpentMP(
-      props.mecha.attributes,
-      props.mecha.weapons,
-      props.mecha.upgrades,
-    );
-    return totalMP(props.mecha.bonusMP) - spent;
-  };
 
   const takenWeapons = () =>
     props.mecha.weapons.map((w, i) => ({ weapon: w, index: i }));
@@ -325,7 +312,6 @@ export function WeaponTab(props: WeaponTabProps): JSX.Element {
             <WeaponRow
               mecha={props.mecha}
               def={def}
-              mpAvailable={mpAvailable()}
             />
           )}
         </For>

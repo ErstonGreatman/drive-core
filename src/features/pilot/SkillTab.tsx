@@ -7,7 +7,6 @@ import type { SkillDefinition, TraitDefinition } from '~/data';
 import {
   computeSpentCP,
   skillCost,
-  totalCP,
   qualifiesForFreeDeathblows,
 } from '~/lib/pilot-costs';
 import { Button } from '~/components/ui/button';
@@ -277,7 +276,6 @@ function TrainedSkillCard(props: TrainedSkillCardProps): JSX.Element {
 interface SkillRowProps {
   pilot: Pilot;
   def: SkillDefinition;
-  cpAvailable: number;
 }
 
 function SkillRow(props: SkillRowProps): JSX.Element {
@@ -312,7 +310,6 @@ function SkillRow(props: SkillRowProps): JSX.Element {
           size="sm"
           variant="outline"
           class="h-7 px-2 text-xs"
-          disabled={props.cpAvailable < specCost()}
           onClick={() => addSkill('specialist')}
         >
           +S {specCost()}
@@ -321,7 +318,6 @@ function SkillRow(props: SkillRowProps): JSX.Element {
           size="sm"
           variant="outline"
           class="h-7 px-2 text-xs"
-          disabled={props.cpAvailable < genCost()}
           onClick={() => addSkill('generalist')}
         >
           +G {genCost()}
@@ -335,17 +331,6 @@ function SkillRow(props: SkillRowProps): JSX.Element {
 
 export function SkillTab(props: SkillTabProps): JSX.Element {
   const [search, setSearch] = createSignal('');
-
-  const cpAvailable = () => {
-    const spent = computeSpentCP(
-      props.pilot.attributes,
-      props.pilot.skills,
-      props.pilot.traits,
-      skillsById,
-      traitsById,
-    );
-    return totalCP(props.pilot.experience) - spent;
-  };
 
   const trainedIds = () => new Set(props.pilot.skills.map((s) => s.skillId));
 
@@ -402,7 +387,7 @@ export function SkillTab(props: SkillTabProps): JSX.Element {
             fallback={<p class="text-sm text-muted-foreground">All regular skills trained.</p>}
           >
             <For each={filteredRegular()}>
-              {(def) => <SkillRow pilot={props.pilot} def={def} cpAvailable={cpAvailable()} />}
+              {(def) => <SkillRow pilot={props.pilot} def={def} />}
             </For>
           </Show>
         </div>
@@ -418,7 +403,7 @@ export function SkillTab(props: SkillTabProps): JSX.Element {
             fallback={<p class="text-sm text-muted-foreground">All miracle skills trained.</p>}
           >
             <For each={filteredMiracle()}>
-              {(def) => <SkillRow pilot={props.pilot} def={def} cpAvailable={cpAvailable()} />}
+              {(def) => <SkillRow pilot={props.pilot} def={def} />}
             </For>
           </Show>
         </div>

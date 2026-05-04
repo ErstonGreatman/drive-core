@@ -5,7 +5,7 @@ import type { UpgradeType } from '~/types/mecha';
 import { updateMecha } from '~/stores/mecha';
 import { upgradeTemplates, upgradeTemplatesById, weaponTemplates, weaponKeywordsById } from '~/data';
 import type { UpgradeTemplateDefinition } from '~/data';
-import { totalMP, computeSpentMP } from '~/lib/mecha-costs';
+import { computeSpentMP } from '~/lib/mecha-costs';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 import { Input } from '~/components/ui/input';
@@ -201,9 +201,6 @@ function SubPoolBuilder(props: SubPoolBuilderProps): JSX.Element {
     }));
   }
 
-  // Only enforce pack capacity — overall MP budget is visible in the header badge
-  const canAddItem = (cost: number) => remaining() >= cost;
-
   const availableWeapons = () => {
     const q = weaponSearch().toLowerCase();
     return weaponTemplates.filter((w) =>
@@ -278,82 +275,66 @@ function SubPoolBuilder(props: SubPoolBuilderProps): JSX.Element {
       </Show>
 
       {/* Add weapons */}
-      <Show when={remaining() > 0}>
-        <div class="space-y-1.5">
-          <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Add Weapon (5 MP each)</p>
-          <Input
-            value={weaponSearch()}
-            onInput={(e) => setWeaponSearch((e.currentTarget as HTMLInputElement).value)}
-            placeholder="Search weapons…"
-            class="h-6 text-[11px]"
-          />
-          <div class="max-h-32 overflow-y-auto space-y-0.5">
-            <For each={availableWeapons()}>
-              {(def) => (
-                <div class="flex items-center justify-between gap-2 py-0.5">
-                  <span class="text-xs truncate flex-1">{def.name}</span>
-                  <div class="flex gap-1 shrink-0">
-                    <For each={def.keywords.slice(0, 2)}>
-                      {(kw) => (
-                        <Badge variant="outline" class="text-[9px] px-1 py-0 capitalize">
-                          {weaponKeywordsById[kw]?.name ?? kw}
-                        </Badge>
-                      )}
-                    </For>
-                  </div>
-                  <button
-                    disabled={!canAddItem(5)}
-                    onClick={() => handleAddSubWeapon(def)}
-                    class={cn(
-                      'text-[11px] px-1.5 py-0.5 rounded border transition-colors shrink-0',
-                      canAddItem(5)
-                        ? 'border-border text-muted-foreground hover:border-foreground hover:text-foreground'
-                        : 'border-border/40 text-muted-foreground/40 cursor-not-allowed',
+      <div class="space-y-1.5">
+        <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Add Weapon (5 MP each)</p>
+        <Input
+          value={weaponSearch()}
+          onInput={(e) => setWeaponSearch((e.currentTarget as HTMLInputElement).value)}
+          placeholder="Search weapons…"
+          class="h-6 text-[11px]"
+        />
+        <div class="max-h-32 overflow-y-auto space-y-0.5">
+          <For each={availableWeapons()}>
+            {(def) => (
+              <div class="flex items-center justify-between gap-2 py-0.5">
+                <span class="text-xs truncate flex-1">{def.name}</span>
+                <div class="flex gap-1 shrink-0">
+                  <For each={def.keywords.slice(0, 2)}>
+                    {(kw) => (
+                      <Badge variant="outline" class="text-[9px] px-1 py-0 capitalize">
+                        {weaponKeywordsById[kw]?.name ?? kw}
+                      </Badge>
                     )}
-                  >
-                    +
-                  </button>
+                  </For>
                 </div>
-              )}
-            </For>
-          </div>
+                <button
+                  onClick={() => handleAddSubWeapon(def)}
+                  class="text-[11px] px-1.5 py-0.5 rounded border transition-colors shrink-0 border-border text-muted-foreground hover:border-foreground hover:text-foreground"
+                >
+                  +
+                </button>
+              </div>
+            )}
+          </For>
         </div>
-      </Show>
+      </div>
 
       {/* Add external upgrades */}
-      <Show when={remaining() > 0}>
-        <div class="space-y-1.5">
-          <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Add External Upgrade</p>
-          <Input
-            value={upgradeSearch()}
-            onInput={(e) => setUpgradeSearch((e.currentTarget as HTMLInputElement).value)}
-            placeholder="Search upgrades…"
-            class="h-6 text-[11px]"
-          />
-          <div class="max-h-32 overflow-y-auto space-y-0.5">
-            <For each={availableUpgrades()}>
-              {(def) => (
-                <div class="flex items-center justify-between gap-2 py-0.5">
-                  <span class="text-xs truncate flex-1">{def.name}</span>
-                  <Badge variant="muted" class="text-[9px] px-1 py-0 font-mono shrink-0">{def.mpCost ?? '?'} MP</Badge>
-                  <button
-                    disabled={!canAddItem(def.mpCost ?? 0)}
-                    onClick={() => handleAddSubUpgrade(def)}
-                    class={cn(
-                      'text-[11px] px-1.5 py-0.5 rounded border transition-colors shrink-0',
-                      canAddItem(def.mpCost ?? 0)
-                        ? 'border-border text-muted-foreground hover:border-foreground hover:text-foreground'
-                        : 'border-border/40 text-muted-foreground/40 cursor-not-allowed',
-                    )}
-                  >
-                    +
-                  </button>
-                </div>
-              )}
-            </For>
-          </div>
+      <div class="space-y-1.5">
+        <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Add External Upgrade</p>
+        <Input
+          value={upgradeSearch()}
+          onInput={(e) => setUpgradeSearch((e.currentTarget as HTMLInputElement).value)}
+          placeholder="Search upgrades…"
+          class="h-6 text-[11px]"
+        />
+        <div class="max-h-32 overflow-y-auto space-y-0.5">
+          <For each={availableUpgrades()}>
+            {(def) => (
+              <div class="flex items-center justify-between gap-2 py-0.5">
+                <span class="text-xs truncate flex-1">{def.name}</span>
+                <Badge variant="muted" class="text-[9px] px-1 py-0 font-mono shrink-0">{def.mpCost ?? '?'} MP</Badge>
+                <button
+                  onClick={() => handleAddSubUpgrade(def)}
+                  class="text-[11px] px-1.5 py-0.5 rounded border transition-colors shrink-0 border-border text-muted-foreground hover:border-foreground hover:text-foreground"
+                >
+                  +
+                </button>
+              </div>
+            )}
+          </For>
         </div>
-      </Show>
+      </div>
     </div>
   );
 }
@@ -607,7 +588,6 @@ function TakenUpgradeCard(props: TakenUpgradeCardProps): JSX.Element {
 interface UpgradeRowProps {
   mecha: Mecha;
   def: UpgradeTemplateDefinition;
-  mpAvailable: number;
   alreadyTaken: boolean;
 }
 
@@ -646,8 +626,7 @@ function UpgradeRow(props: UpgradeRowProps): JSX.Element {
   };
 
   const canAdd = () =>
-    (props.def.isSpecialist || !props.alreadyTaken) &&
-    (props.def.mpCost === undefined || props.mpAvailable >= (props.def.mpCost ?? 0));
+    props.def.isSpecialist || !props.alreadyTaken;
 
   const buttonLabel = () => {
     if (justAdded()) { return '✓ Added'; }
@@ -689,15 +668,6 @@ function UpgradeRow(props: UpgradeRowProps): JSX.Element {
 
 export function UpgradeTab(props: UpgradeTabProps): JSX.Element {
   const [activeType, setActiveType] = createSignal<UpgradeType>('internal');
-
-  const mpAvailable = () => {
-    const spent = computeSpentMP(
-      props.mecha.attributes,
-      props.mecha.weapons,
-      props.mecha.upgrades,
-    );
-    return totalMP(props.mecha.bonusMP) - spent;
-  };
 
   const takenIds = () => new Set(props.mecha.upgrades.map((u) => u.templateId).filter(Boolean));
 
@@ -791,7 +761,6 @@ export function UpgradeTab(props: UpgradeTabProps): JSX.Element {
                   <UpgradeRow
                     mecha={props.mecha}
                     def={def}
-                    mpAvailable={mpAvailable()}
                     alreadyTaken={takenIds().has(def.id)}
                   />
                 )}
