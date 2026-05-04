@@ -93,25 +93,39 @@ export default function About(): JSX.Element {
               License
             </CardTitle>
           </CardHeader>
-          <CardContent class="space-y-2 text-sm text-muted-foreground">
+          <CardContent class="space-y-3 text-sm text-muted-foreground">
             <p>
-              Battle Century G is licensed under the{' '}
+              Rules text, game data, and other content from Battle Century G Remastered used in
+              this app belongs to its author and is used here under its original license:
+            </p>
+            <blockquote class="border-l-2 border-border pl-3 space-y-1">
+              <p>
+                Battle Century G is licensed under the{' '}
+                <a
+                  href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="text-primary underline-offset-4 hover:underline"
+                >
+                  Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License
+                </a>
+                .
+              </p>
+              <p>© 2022 Juan Herrera. Some Rights Reserved.</p>
+              <p class="font-mono text-xs">Rules Version 1.84</p>
+            </blockquote>
+            <p>
+              Drive Core's source code is separately licensed under the{' '}
               <a
-                href="https://creativecommons.org/licenses/by-nc-nd/4.0/"
+                href="https://github.com/ErstonGreatman/drive-core/blob/main/LICENSE"
                 target="_blank"
                 rel="noopener noreferrer"
                 class="text-primary underline-offset-4 hover:underline"
               >
-                Creative Commons Attribution-NonCommercial-NoDerivatives 4.0 International License
+                MIT License
               </a>
               .
             </p>
-            <p>© 2022 Juan Herrera. Some Rights Reserved.</p>
-            <p>
-              That means you may copy and share the text of this book as-is for noncommercial
-              purposes, attributing the author of the original work, and using the same license.
-            </p>
-            <p class="font-mono text-xs pt-1">Rules Version 1.84</p>
           </CardContent>
         </Card>
 
