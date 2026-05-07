@@ -24,7 +24,7 @@ export default function About(): JSX.Element {
               Battle Century G Remastered
             </a>
             . No accounts, no servers — everything lives in your browser.
-            Build your pilots, kit out your mechas, bring them to the table.
+            Build your pilots, kit out your mecha, bring them to the table.
           </p>
         </div>
 
