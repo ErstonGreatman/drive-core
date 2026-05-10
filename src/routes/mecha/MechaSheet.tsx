@@ -12,7 +12,7 @@ import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Separator } from '../../components/ui/separator';
 import { cn } from '~/lib/utils.ts';
-import type { MechaUpgrade, MechaWeapon } from '~/types';
+import type { Mecha, MechaUpgrade, MechaWeapon } from '~/types';
 
 // ── Module-level data ──────────────────────────────────────────────────────────
 
@@ -151,6 +151,7 @@ function WeaponEntry(props: { weapon: MechaWeapon; isDefault?: boolean }): JSX.E
             {(ability) => (
               <p class="text-xs text-muted-foreground leading-snug">
                 <span class="font-medium text-foreground">{ability.name}</span>
+                {ability.label && <span class="text-foreground"> ({ability.label})</span>}
                 {ability.wpCost !== 0 && <span class="font-mono"> ({ability.wpCost > 0 ? `+${ability.wpCost}` : ability.wpCost} WP)</span>}
                 {ability.description && ` — ${ability.description}`}
               </p>
@@ -162,27 +163,29 @@ function WeaponEntry(props: { weapon: MechaWeapon; isDefault?: boolean }): JSX.E
   );
 }
 
-// ── MechaSheet ─────────────────────────────────────────────────────────────────
+// ── MechaSheetView ─────────────────────────────────────────────────────────────
 
-export default function MechaSheet(): JSX.Element {
-  const params = useParams<{ id: string }>();
-  const mecha = () => mechaState.mecha.find((m) => m.id === params.id);
+export interface MechaSheetViewProps {
+  mecha: Mecha;
+  backHref?: string;
+  backLabel?: string;
+  editHref?: string;
+}
 
-  const mpTotal = createMemo(() => totalMP(mecha()?.bonusMP ?? 0));
-  const mpSpent = createMemo(() => {
-    const m = mecha();
-    if (!m) { return 0; }
-    return computeSpentMP(m.attributes, m.weapons, m.upgrades);
-  });
+export function MechaSheetView(props: MechaSheetViewProps): JSX.Element {
+  const mpTotal = createMemo(() => totalMP(props.mecha.bonusMP));
+  const mpSpent = createMemo(() =>
+    computeSpentMP(props.mecha.attributes, props.mecha.weapons, props.mecha.upgrades),
+  );
 
   const internalUpgrades = createMemo(() =>
-    (mecha()?.upgrades ?? []).filter((u) => u.upgradeType === 'internal'),
+    props.mecha.upgrades.filter((u) => u.upgradeType === 'internal'),
   );
   const externalUpgrades = createMemo(() =>
-    (mecha()?.upgrades ?? []).filter((u) => u.upgradeType === 'external'),
+    props.mecha.upgrades.filter((u) => u.upgradeType === 'external'),
   );
   const separateUpgrades = createMemo(() =>
-    (mecha()?.upgrades ?? []).filter((u) => u.upgradeType === 'separate'),
+    props.mecha.upgrades.filter((u) => u.upgradeType === 'separate'),
   );
 
   const hasUpgrades = createMemo(() =>
@@ -190,171 +193,194 @@ export default function MechaSheet(): JSX.Element {
   );
 
   return (
+    <div class="flex-1 overflow-y-auto py-8 pr-4 min-h-0">
+      <div class="max-w-3xl space-y-6">
+
+        {/* ── Header ──────────────────────────────────────────────────── */}
+        <div class="space-y-3">
+          <div class="flex items-center gap-2">
+            <Show when={props.backHref}>
+              {(href) => (
+                <Button variant="ghost" size="sm" as="a" href={href()}>
+                  <ChevronLeft /> {props.backLabel ?? 'Home'}
+                </Button>
+              )}
+            </Show>
+            <div class="ml-auto flex items-center gap-2">
+              <ExportMenu data={props.mecha} filename={`${slugify(props.mecha.name)}-mecha`} />
+              <Show when={props.editHref}>
+                {(href) => (
+                  <Button variant="outline" size="sm" as="a" href={href()}>
+                    <Pencil class="size-3.5" /> Edit
+                  </Button>
+                )}
+              </Show>
+            </div>
+          </div>
+          <div>
+            <h1 class="text-2xl font-bold">{props.mecha.name}</h1>
+            <Show when={props.mecha.campaignTag}>
+              <p class="text-sm text-muted-foreground mt-0.5">{props.mecha.campaignTag}</p>
+            </Show>
+            <Show when={props.mecha.description}>
+              <p class="text-sm text-muted-foreground mt-1">{props.mecha.description}</p>
+            </Show>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            <Badge
+              variant="muted"
+              class={cn('font-mono', (mpTotal() - mpSpent()) < 0 && 'bg-destructive/10 text-destructive')}
+            >
+              {mpTotal() - mpSpent()} / {mpTotal()} MP
+            </Badge>
+            <Badge variant="muted" class="font-mono">Guard {props.mecha.attributes.guard}</Badge>
+            <Badge variant="muted" class="font-mono">THR {props.mecha.attributes.threshold}</Badge>
+            <Badge variant="muted" class="font-mono">Energy {props.mecha.attributes.energy}</Badge>
+            <Badge variant="muted" class="font-mono">Speed {props.mecha.attributes.speed}</Badge>
+          </div>
+        </div>
+
+        {/* ── Attributes ──────────────────────────────────────────────── */}
+        <Card>
+          <CardHeader><CardTitle>Attributes</CardTitle></CardHeader>
+          <CardContent>
+            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+              <For each={MECHA_ATTRS}>
+                {(attr) => (
+                  <div class="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2">
+                    <span class="text-sm text-muted-foreground">{attr.label}</span>
+                    <span class="font-mono font-semibold tabular-nums">{props.mecha.attributes[attr.key]}</span>
+                  </div>
+                )}
+              </For>
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* ── Upgrades ────────────────────────────────────────────────── */}
+        <Show when={hasUpgrades()}>
+          <Card>
+            <CardHeader>
+              <CardTitle>
+                Upgrades ({internalUpgrades().length + externalUpgrades().length + separateUpgrades().length})
+              </CardTitle>
+            </CardHeader>
+            <CardContent class="space-y-4">
+
+              <Show when={internalUpgrades().length > 0}>
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                    Internal — Core ({internalUpgrades().length})
+                  </p>
+                  <For each={internalUpgrades()}>
+                    {(u) => <UpgradeEntry upgrade={u} showArea={false} />}
+                  </For>
+                </div>
+              </Show>
+
+              <Show when={internalUpgrades().length > 0 && externalUpgrades().length > 0}>
+                <Separator />
+              </Show>
+
+              <Show when={externalUpgrades().length > 0}>
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                    External ({externalUpgrades().length})
+                  </p>
+                  <For each={externalUpgrades()}>
+                    {(u) => <UpgradeEntry upgrade={u} showArea={true} />}
+                  </For>
+                </div>
+              </Show>
+
+              <Show when={
+                (internalUpgrades().length > 0 || externalUpgrades().length > 0) &&
+                separateUpgrades().length > 0
+              }>
+                <Separator />
+              </Show>
+
+              <Show when={separateUpgrades().length > 0}>
+                <div>
+                  <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                    Separate ({separateUpgrades().length})
+                  </p>
+                  <For each={separateUpgrades()}>
+                    {(u) => <UpgradeEntry upgrade={u} showArea={false} />}
+                  </For>
+                </div>
+              </Show>
+
+            </CardContent>
+          </Card>
+        </Show>
+
+        {/* ── Weapons ─────────────────────────────────────────────────── */}
+        <Card>
+          <CardHeader>
+            <CardTitle>Weapons ({DEFAULT_WEAPONS.length + props.mecha.weapons.length})</CardTitle>
+          </CardHeader>
+          <CardContent class="space-y-4">
+
+            {/* Built-in defaults */}
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                Built-in — always present, free
+              </p>
+              <For each={DEFAULT_WEAPONS}>
+                {(template) => {
+                  const asWeapon: MechaWeapon = {
+                    id: template.id,
+                    templateId: template.id,
+                    name: template.name,
+                    area: 'core',
+                    keywords: template.keywords,
+                    energyCost: template.energyCost,
+                    abilities: [],
+                    isCustom: false,
+                  };
+                  return <WeaponEntry weapon={asWeapon} isDefault={true} />;
+                }}
+              </For>
+            </div>
+
+            <Show when={props.mecha.weapons.length > 0}>
+              <Separator />
+              <div>
+                <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
+                  Equipped ({props.mecha.weapons.length})
+                </p>
+                <For each={props.mecha.weapons}>
+                  {(w) => <WeaponEntry weapon={w} isDefault={false} />}
+                </For>
+              </div>
+            </Show>
+
+          </CardContent>
+        </Card>
+
+      </div>
+    </div>
+  );
+}
+
+// ── Route default export ───────────────────────────────────────────────────────
+
+export default function MechaSheet(): JSX.Element {
+  const params = useParams<{ id: string }>();
+  const mecha = () => mechaState.mecha.find((m) => m.id === params.id);
+
+  return (
     <Show
       when={mecha()}
       fallback={<p class="text-muted-foreground text-sm py-8">Mecha not found.</p>}
     >
       {(m) => (
-        <div class="flex-1 overflow-y-auto py-8 min-h-0">
-          <div class="max-w-3xl space-y-6">
-
-            {/* ── Header ──────────────────────────────────────────────────── */}
-            <div class="space-y-3">
-              <div class="flex items-center gap-2">
-                <Button variant="ghost" size="sm" as="a" href="/">
-                  <ChevronLeft /> Home
-                </Button>
-                <div class="ml-auto flex items-center gap-2">
-                  <ExportMenu data={m()} filename={`${slugify(m().name)}-mecha`} />
-                  <Button variant="outline" size="sm" as="a" href={`/mecha/${params.id}`}>
-                    <Pencil class="size-3.5" /> Edit
-                  </Button>
-                </div>
-              </div>
-              <div>
-                <h1 class="text-2xl font-bold">{m().name}</h1>
-                <Show when={m().campaignTag}>
-                  <p class="text-sm text-muted-foreground mt-0.5">{m().campaignTag}</p>
-                </Show>
-                <Show when={m().description}>
-                  <p class="text-sm text-muted-foreground mt-1">{m().description}</p>
-                </Show>
-              </div>
-              <div class="flex flex-wrap gap-2">
-                <Badge
-                  variant="muted"
-                  class={cn('font-mono', (mpTotal() - mpSpent()) < 0 && 'bg-destructive/10 text-destructive')}
-                >
-                  {mpTotal() - mpSpent()} / {mpTotal()} MP
-                </Badge>
-                <Badge variant="muted" class="font-mono">Guard {m().attributes.guard}</Badge>
-                <Badge variant="muted" class="font-mono">THR {m().attributes.threshold}</Badge>
-                <Badge variant="muted" class="font-mono">Energy {m().attributes.energy}</Badge>
-                <Badge variant="muted" class="font-mono">Speed {m().attributes.speed}</Badge>
-              </div>
-            </div>
-
-            {/* ── Attributes ──────────────────────────────────────────────── */}
-            <Card>
-              <CardHeader><CardTitle>Attributes</CardTitle></CardHeader>
-              <CardContent>
-                <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                  <For each={MECHA_ATTRS}>
-                    {(attr) => (
-                      <div class="flex items-center justify-between gap-2 rounded-md border border-border px-3 py-2">
-                        <span class="text-sm text-muted-foreground">{attr.label}</span>
-                        <span class="font-mono font-semibold tabular-nums">{m().attributes[attr.key]}</span>
-                      </div>
-                    )}
-                  </For>
-                </div>
-              </CardContent>
-            </Card>
-
-            {/* ── Upgrades ────────────────────────────────────────────────── */}
-            <Show when={hasUpgrades()}>
-              <Card>
-                <CardHeader>
-                  <CardTitle>
-                    Upgrades ({internalUpgrades().length + externalUpgrades().length + separateUpgrades().length})
-                  </CardTitle>
-                </CardHeader>
-                <CardContent class="space-y-4">
-
-                  <Show when={internalUpgrades().length > 0}>
-                    <div>
-                      <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-                        Internal — Core ({internalUpgrades().length})
-                      </p>
-                      <For each={internalUpgrades()}>
-                        {(u) => <UpgradeEntry upgrade={u} showArea={false} />}
-                      </For>
-                    </div>
-                  </Show>
-
-                  <Show when={internalUpgrades().length > 0 && externalUpgrades().length > 0}>
-                    <Separator />
-                  </Show>
-
-                  <Show when={externalUpgrades().length > 0}>
-                    <div>
-                      <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-                        External ({externalUpgrades().length})
-                      </p>
-                      <For each={externalUpgrades()}>
-                        {(u) => <UpgradeEntry upgrade={u} showArea={true} />}
-                      </For>
-                    </div>
-                  </Show>
-
-                  <Show when={
-                    (internalUpgrades().length > 0 || externalUpgrades().length > 0) &&
-                    separateUpgrades().length > 0
-                  }>
-                    <Separator />
-                  </Show>
-
-                  <Show when={separateUpgrades().length > 0}>
-                    <div>
-                      <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-                        Separate ({separateUpgrades().length})
-                      </p>
-                      <For each={separateUpgrades()}>
-                        {(u) => <UpgradeEntry upgrade={u} showArea={false} />}
-                      </For>
-                    </div>
-                  </Show>
-
-                </CardContent>
-              </Card>
-            </Show>
-
-            {/* ── Weapons ─────────────────────────────────────────────────── */}
-            <Card>
-              <CardHeader>
-                <CardTitle>Weapons ({DEFAULT_WEAPONS.length + m().weapons.length})</CardTitle>
-              </CardHeader>
-              <CardContent class="space-y-4">
-
-                {/* Built-in defaults */}
-                <div>
-                  <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-                    Built-in — always present, free
-                  </p>
-                  <For each={DEFAULT_WEAPONS}>
-                    {(template) => {
-                      const asWeapon: MechaWeapon = {
-                        id: template.id,
-                        templateId: template.id,
-                        name: template.name,
-                        area: 'core',
-                        keywords: template.keywords,
-                        energyCost: template.energyCost,
-                        abilities: [],
-                        isCustom: false,
-                      };
-                      return <WeaponEntry weapon={asWeapon} isDefault={true} />;
-                    }}
-                  </For>
-                </div>
-
-                <Show when={m().weapons.length > 0}>
-                  <Separator />
-                  <div>
-                    <p class="text-xs font-semibold uppercase tracking-wide text-muted-foreground mb-1">
-                      Equipped ({m().weapons.length})
-                    </p>
-                    <For each={m().weapons}>
-                      {(w) => <WeaponEntry weapon={w} isDefault={false} />}
-                    </For>
-                  </div>
-                </Show>
-
-              </CardContent>
-            </Card>
-
-          </div>
-        </div>
+        <MechaSheetView
+          mecha={m()}
+          backHref="/"
+          editHref={`/mecha/${params.id}`}
+        />
       )}
     </Show>
   );

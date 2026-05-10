@@ -6,6 +6,8 @@ export const WeaponAbilitySchema = z.object({
   name: z.string(),
   description: z.string(),
   wpCost: z.number().int(),
+  // User-defined condition text, e.g. for Conditional Advantage
+  label: z.string().optional(),
 });
 
 // Entries in weapon-abilities.json: the selectable ability options for custom weapons

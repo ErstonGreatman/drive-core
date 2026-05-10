@@ -22,6 +22,20 @@ export function Layout(props: LayoutProps): JSX.Element {
         <span class="text-xs text-muted-foreground font-mono">BCG-R Builder</span>
         <nav class="ml-auto flex items-center gap-1">
           <A
+            href="/viewer"
+            class="px-2 py-1 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
+            activeClass="text-foreground"
+          >
+            Viewer
+          </A>
+          <A
+            href="/changelog"
+            class="px-2 py-1 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
+            activeClass="text-foreground"
+          >
+            Changelog
+          </A>
+          <A
             href="/about"
             class="px-2 py-1 text-sm text-muted-foreground hover:text-foreground transition-colors rounded-md hover:bg-accent"
             activeClass="text-foreground"

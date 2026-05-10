@@ -84,6 +84,7 @@ function cloneSubWeapon(w: MechaWeapon): MechaWeapon {
       name: a.name,
       description: a.description,
       wpCost: a.wpCost,
+      label: a.label,
     })),
     isCustom: w.isCustom,
   };
