@@ -13,7 +13,7 @@ export function TabsList(props: TabsListProps): JSX.Element {
   const [local, rest] = splitProps(props, ['class']);
   return (
     <TabsPrimitive.List
-      class={cn('flex items-center gap-0 border-b border-border w-full overflow-x-auto', local.class)}
+      class={cn('flex items-center gap-0 border-b border-border w-full overflow-x-auto scrollbar-hide', local.class)}
       {...rest}
     />
   );
@@ -49,7 +49,7 @@ export function TabsContent(props: TabsContentProps): JSX.Element {
   const [local, rest] = splitProps(props, ['class']);
   return (
     <TabsPrimitive.Content
-      class={cn('mt-6 outline-none', local.class)}
+      class={cn('mt-6 pr-2 outline-none', local.class)}
       {...rest}
     />
   );

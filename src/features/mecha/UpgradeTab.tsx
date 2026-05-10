@@ -133,7 +133,6 @@ function SubPoolBuilder(props: SubPoolBuilderProps): JSX.Element {
 
   const upgrade = () => props.mecha.upgrades[props.upgradeIndex];
   const usedMP = () => subItemsUsedMP(upgrade());
-  const remaining = () => SUB_POOL_CAPACITY - usedMP();
 
   function patchSubItems(
     patcher: (items: { weapons: MechaWeapon[]; upgrades: MechaSubUpgrade[] }) => {
@@ -357,6 +356,15 @@ function TakenUpgradeCard(props: TakenUpgradeCardProps): JSX.Element {
     updateMecha(props.mecha.id, { upgrades: newUpgrades, spentMP: newSpent });
   }
 
+  function handleNameBlur(e: FocusEvent): void {
+    const value = (e.currentTarget as HTMLInputElement).value.trim();
+    const newUpgrades = props.mecha.upgrades.map((u, i): MechaUpgrade => {
+      if (i !== props.index) { return cloneUpgrade(u); }
+      return { ...cloneUpgrade(u), name: value || u.name };
+    });
+    updateMecha(props.mecha.id, { upgrades: newUpgrades });
+  }
+
   function handleAreaChange(area: ExternalArea): void {
     const newUpgrades = props.mecha.upgrades.map((u, i): MechaUpgrade => {
       if (i !== props.index) { return cloneUpgrade(u); }
@@ -442,11 +450,15 @@ function TakenUpgradeCard(props: TakenUpgradeCardProps): JSX.Element {
     props.upgrade.templateId === 'secret-equipment';
 
   return (
-    <div class="p-3 rounded-lg border border-border bg-card space-y-2">
+    <div class="p-4 rounded-lg border border-border bg-card space-y-2">
       <div class="flex items-start gap-2">
         <div class="flex-1 min-w-0">
+          <Input
+            value={props.upgrade.name}
+            onBlur={handleNameBlur}
+            class="-mx-1 mb-0.5 h-auto py-0 px-1 text-sm font-medium border-transparent shadow-none hover:border-input"
+          />
           <div class="flex items-center gap-1.5 flex-wrap">
-            <span class="text-sm font-medium">{props.upgrade.name}</span>
             <Badge variant="muted" class="text-[10px] px-1.5 py-0 font-mono">
               {props.upgrade.templateId === 'invincible-super-combination'
                 ? `${props.upgrade.customMpCost ?? 0} MP`
@@ -458,7 +470,7 @@ function TakenUpgradeCard(props: TakenUpgradeCardProps): JSX.Element {
 
           {/* Area placement */}
           <Show when={props.upgrade.upgradeType === 'external'}>
-            <div class="flex gap-1 mt-1.5 flex-wrap">
+            <div class="flex gap-1 mt-2 flex-wrap">
               <For each={EXTERNAL_AREAS}>
                 {(area) => (
                   <button
@@ -729,7 +741,7 @@ export function UpgradeTab(props: UpgradeTabProps): JSX.Element {
       <Show when={takenInType().length > 0}>
         <div class="space-y-2">
           <h3 class="text-sm font-semibold">Installed</h3>
-          <div class="space-y-2">
+          <div class="space-y-3">
             <For each={takenInType()}>
               {({ upgrade, def, index }) => (
                 <TakenUpgradeCard
