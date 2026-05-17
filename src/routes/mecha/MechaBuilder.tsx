@@ -16,7 +16,7 @@ import { WeaponTab } from '../../features/mecha/WeaponTab';
 import { computeSpentMP, totalMP } from '~/lib/mecha-costs.ts';
 import { cn } from '~/lib/utils.ts';
 
-export default function MechaBuilder(): JSX.Element {
+const MechaBuilder = (): JSX.Element => {
   const params = useParams<{ id: string }>();
   const mecha = () => mechaState.mecha.find((m) => m.id === params.id);
 
@@ -33,14 +33,14 @@ export default function MechaBuilder(): JSX.Element {
   const energy = () => mecha()?.attributes.energy ?? 0;
   const speed = () => mecha()?.attributes.speed ?? 0;
 
-  function handleNameBlur(e: FocusEvent): void {
+  const handleNameBlur = (e: FocusEvent): void => {
     const m = mecha();
     if (!m) { return; }
     const value = (e.currentTarget as HTMLInputElement).value.trim();
     if (value !== m.name) {
       updateMecha(m.id, { name: value || 'New Mecha' });
     }
-  }
+  };
 
   return (
     <Show
@@ -138,4 +138,6 @@ export default function MechaBuilder(): JSX.Element {
       )}
     </Show>
   );
-}
+};
+
+export default MechaBuilder;

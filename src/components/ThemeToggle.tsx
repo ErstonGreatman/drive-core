@@ -18,7 +18,7 @@ const OPTIONS: ThemeOption[] = [
   { value: 'dark',   label: 'Dark',   Icon: (p) => <Moon {...p} /> },
 ];
 
-export function ThemeToggle(): JSX.Element {
+export const ThemeToggle = (): JSX.Element => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger class="inline-flex size-8 items-center justify-center rounded-md text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">

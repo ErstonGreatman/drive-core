@@ -9,30 +9,30 @@ interface InfoTabProps {
   pilot: Pilot;
 }
 
-export function InfoTab(props: InfoTabProps): JSX.Element {
-  function handleTagBlur(e: FocusEvent): void {
+export const InfoTab = (props: InfoTabProps): JSX.Element => {
+  const handleTagBlur = (e: FocusEvent): void => {
     const value = (e.currentTarget as HTMLInputElement).value.trim();
     const current = props.pilot.campaignTag ?? '';
     if (value !== current) {
       updatePilot(props.pilot.id, { campaignTag: value || undefined });
     }
-  }
+  };
 
-  function handleDescBlur(e: FocusEvent): void {
+  const handleDescBlur = (e: FocusEvent): void => {
     const value = (e.currentTarget as HTMLTextAreaElement).value;
     const current = props.pilot.description ?? '';
     if (value !== current) {
       updatePilot(props.pilot.id, { description: value || undefined });
     }
-  }
+  };
 
-  function handleExperienceInput(e: InputEvent): void {
+  const handleExperienceInput = (e: InputEvent): void => {
     const raw = (e.currentTarget as HTMLInputElement).value;
     const value = parseInt(raw, 10);
     if (!isNaN(value) && value >= 0) {
       updatePilot(props.pilot.id, { experience: value });
     }
-  }
+  };
 
   return (
     <div class="space-y-5 max-w-lg">
