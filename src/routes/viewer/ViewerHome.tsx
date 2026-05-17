@@ -11,7 +11,7 @@ import { Button } from '~/components/ui/button';
 
 type Selection = { type: 'pilot'; id: string } | { type: 'mecha'; id: string } | null;
 
-export default function ViewerHome(): JSX.Element {
+const ViewerHome = (): JSX.Element => {
   const [sidebarOpen, setSidebarOpen] = createSignal(true);
   const [selection, setSelection] = createSignal<Selection>(null);
   const [importError, setImportError] = createSignal('');
@@ -52,14 +52,14 @@ export default function ViewerHome(): JSX.Element {
     return viewerState.mecha.find((m) => m.id === sel.id) ?? null;
   });
 
-  function flashSuccess(msg: string): void {
+  const flashSuccess = (msg: string): void => {
     clearTimeout(successTimer);
     setImportSuccess(msg);
     setImportError('');
     successTimer = setTimeout(() => setImportSuccess(''), 2000);
-  }
+  };
 
-  function tryImport(raw: unknown): void {
+  const tryImport = (raw: unknown): void => {
     const newId = crypto.randomUUID();
 
     const pilotResult = PilotSchema.safeParse(raw);
@@ -80,9 +80,9 @@ export default function ViewerHome(): JSX.Element {
 
     setImportError('Not a valid pilot or mecha export.');
     setImportSuccess('');
-  }
+  };
 
-  function handleImportFile(): void {
+  const handleImportFile = (): void => {
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json,application/json';
@@ -100,9 +100,9 @@ export default function ViewerHome(): JSX.Element {
       reader.readAsText(file);
     };
     input.click();
-  }
+  };
 
-  function handlePasteImport(): void {
+  const handlePasteImport = (): void => {
     setImportError('');
     navigator.clipboard.readText().then((text) => {
       try {
@@ -113,7 +113,7 @@ export default function ViewerHome(): JSX.Element {
     }).catch(() => {
       setImportError('Cannot read clipboard. Try importing a file.');
     });
-  }
+  };
 
   return (
     <div class="flex-1 min-h-0 flex flex-col overflow-hidden">
@@ -264,4 +264,6 @@ export default function ViewerHome(): JSX.Element {
       </div>
     </div>
   );
-}
+};
+
+export default ViewerHome;

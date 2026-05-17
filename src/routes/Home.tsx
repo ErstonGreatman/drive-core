@@ -43,7 +43,7 @@ interface PilotCardProps {
   onDelete: () => void;
 }
 
-function PilotCard(props: PilotCardProps): JSX.Element {
+const PilotCard = (props: PilotCardProps): JSX.Element => {
   const powerLevel = () => Math.floor(props.pilot.experience / 30);
   const cpTotal = () => totalCP(props.pilot.experience);
   const cpAvailable = () => cpTotal() - (props.pilot.spentCP ?? 0);
@@ -78,7 +78,7 @@ function PilotCard(props: PilotCardProps): JSX.Element {
       </CardFooter>
     </Card>
   );
-}
+};
 
 // ── Mecha card ────────────────────────────────────────────────────────────────
 
@@ -89,7 +89,7 @@ interface MechaCardProps {
   onDelete: () => void;
 }
 
-function MechaCard(props: MechaCardProps): JSX.Element {
+const MechaCard = (props: MechaCardProps): JSX.Element => {
   const totalMP = () => 100 + props.mecha.bonusMP;
   const availableMP = () => totalMP() - props.mecha.spentMP;
 
@@ -120,7 +120,7 @@ function MechaCard(props: MechaCardProps): JSX.Element {
       </CardFooter>
     </Card>
   );
-}
+};
 
 // ── Home ──────────────────────────────────────────────────────────────────────
 
@@ -133,7 +133,7 @@ interface ImportMenuProps {
   onFromClipboard: () => void;
 }
 
-function ImportMenu(props: ImportMenuProps): JSX.Element {
+const ImportMenu = (props: ImportMenuProps): JSX.Element => {
   return (
     <DropdownMenu.Root>
       <DropdownMenu.Trigger class="inline-flex items-center gap-1.5 h-8 px-3 rounded-md border border-input bg-transparent text-sm ring-offset-background transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2">
@@ -152,11 +152,11 @@ function ImportMenu(props: ImportMenuProps): JSX.Element {
       </DropdownMenu.Portal>
     </DropdownMenu.Root>
   );
-}
+};
 
 // ── Home ──────────────────────────────────────────────────────────────────────
 
-export default function Home(): JSX.Element {
+const Home = (): JSX.Element => {
   const navigate = useNavigate();
   const [deleteTarget, setDeleteTarget] = createSignal<DeleteTarget | null>(null);
   const [pilotImportError, setPilotImportError] = createSignal<string | null>(null);
@@ -165,80 +165,80 @@ export default function Home(): JSX.Element {
   let pilotFileRef!: HTMLInputElement;
   let mechaFileRef!: HTMLInputElement;
 
-  function showPilotError(msg: string): void {
+  const showPilotError = (msg: string): void => {
     setPilotImportError(msg);
     setTimeout(() => setPilotImportError(null), 6000);
-  }
+  };
 
-  function showMechaError(msg: string): void {
+  const showMechaError = (msg: string): void => {
     setMechaImportError(msg);
     setTimeout(() => setMechaImportError(null), 6000);
-  }
+  };
 
-  function importPilot(text: string): void {
+  const importPilot = (text: string): void => {
     const result = parsePilotJSON(text);
     if (!result.ok) { showPilotError(result.error); return; }
     const pilot: Pilot = { ...result.data, id: crypto.randomUUID(), assignedMechaIds: [] };
     addPilot(pilot);
     navigate(`/pilots/${pilot.id}`);
-  }
+  };
 
-  function importMecha(text: string): void {
+  const importMecha = (text: string): void => {
     const result = parseMechaJSON(text);
     if (!result.ok) { showMechaError(result.error); return; }
     const mecha: Mecha = { ...result.data, id: crypto.randomUUID(), assignedPilotIds: [] };
     addMecha(mecha);
     navigate(`/mecha/${mecha.id}`);
-  }
+  };
 
-  function handlePilotFileChange(e: Event & { currentTarget: HTMLInputElement }): void {
+  const handlePilotFileChange = (e: Event & { currentTarget: HTMLInputElement }): void => {
     const file = e.currentTarget.files?.[0];
     if (!file) { return; }
     file.text().then((text) => {
       importPilot(text);
     }).catch(() => showPilotError('Could not read the file.'));
     e.currentTarget.value = '';
-  }
+  };
 
-  function handleMechaFileChange(e: Event & { currentTarget: HTMLInputElement }): void {
+  const handleMechaFileChange = (e: Event & { currentTarget: HTMLInputElement }): void => {
     const file = e.currentTarget.files?.[0];
     if (!file) { return; }
     file.text().then((text) => {
       importMecha(text);
     }).catch(() => showMechaError('Could not read the file.'));
     e.currentTarget.value = '';
-  }
+  };
 
-  function handlePilotClipboard(): void {
+  const handlePilotClipboard = (): void => {
     navigator.clipboard.readText().then((text) => {
       importPilot(text);
     }).catch(() => showPilotError('Could not read clipboard. Try importing from a file instead.'));
-  }
+  };
 
-  function handleMechaClipboard(): void {
+  const handleMechaClipboard = (): void => {
     navigator.clipboard.readText().then((text) => {
       importMecha(text);
     }).catch(() => showMechaError('Could not read clipboard. Try importing from a file instead.'));
-  }
+  };
 
-  function handleNewPilot(): void {
+  const handleNewPilot = (): void => {
     const pilot = createDefaultPilot();
     addPilot(pilot);
     navigate(`/pilots/${pilot.id}`);
-  }
+  };
 
-  function handleNewMecha(): void {
+  const handleNewMecha = (): void => {
     const mecha = createDefaultMecha();
     addMecha(mecha);
     navigate(`/mecha/${mecha.id}`);
-  }
+  };
 
-  function confirmDelete(): void {
+  const confirmDelete = (): void => {
     const target = deleteTarget();
     if (!target) { return; }
     if (target.type === 'pilot') { removePilot(target.id); }
     else { removeMecha(target.id); }
-  }
+  };
 
   return (
     <div class="flex-1 overflow-y-auto py-8 min-h-0">
@@ -358,4 +358,6 @@ export default function Home(): JSX.Element {
       </AlertDialog>
     </div>
   );
-}
+};
+
+export default Home;
