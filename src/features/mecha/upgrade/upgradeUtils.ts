@@ -100,6 +100,13 @@ export const cloneUpgrade = (u: MechaUpgrade): MechaUpgrade => ({
   formPools: u.formPools ? u.formPools.map(cloneFormPool) : undefined,
 });
 
+export const patchUpgrade = (
+  upgrades: MechaUpgrade[],
+  index: number,
+  patch: Partial<MechaUpgrade>,
+): MechaUpgrade[] =>
+  upgrades.map((u, i) => (i !== index ? cloneUpgrade(u) : { ...cloneUpgrade(u), ...patch }));
+
 export const subItemsUsedMP = (u: MechaUpgrade): number => {
   if (!u.subItems) { return 0; }
   return u.subItems.weapons.length * 5 + u.subItems.upgrades.reduce((s, sub) => s + sub.mpCost, 0);

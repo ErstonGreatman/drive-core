@@ -10,7 +10,7 @@ import { Input } from '~/components/ui/input';
 import { cn } from '~/lib/utils';
 import {
   EXTERNAL_AREAS, SWAP_ATTR_OPTIONS, REPEATABLE_IDS, cloneUpgrade,
-  isAttrSelected, isSwapComplete, isAttrDisabled, nextSwapState,
+  isAttrSelected, isSwapComplete, isAttrDisabled, nextSwapState, patchUpgrade,
 } from './upgradeUtils';
 import type { ExternalArea } from './upgradeUtils';
 import { SubPoolModal } from './SubPoolModal';
@@ -33,54 +33,31 @@ export const TakenUpgradeCard = (props: TakenUpgradeCardProps): JSX.Element => {
 
   const handleNameBlur = (e: FocusEvent): void => {
     const value = (e.currentTarget as HTMLInputElement).value.trim();
-    const newUpgrades = props.mecha.upgrades.map((u, i): MechaUpgrade => {
-      if (i !== props.index) { return cloneUpgrade(u); }
-      return { ...cloneUpgrade(u), name: value || u.name };
-    });
-    updateMecha(props.mecha.id, { upgrades: newUpgrades });
+    updateMecha(props.mecha.id, { upgrades: patchUpgrade(props.mecha.upgrades, props.index, { name: value || props.upgrade.name }) });
   };
 
   const handleAreaChange = (area: ExternalArea): void => {
-    const newUpgrades = props.mecha.upgrades.map((u, i): MechaUpgrade => {
-      if (i !== props.index) { return cloneUpgrade(u); }
-      return { ...cloneUpgrade(u), area };
-    });
-    updateMecha(props.mecha.id, { upgrades: newUpgrades });
+    updateMecha(props.mecha.id, { upgrades: patchUpgrade(props.mecha.upgrades, props.index, { area }) });
   };
 
   const handleLabelBlur = (e: FocusEvent): void => {
     const value = (e.currentTarget as HTMLInputElement).value.trim();
-    const newUpgrades = props.mecha.upgrades.map((u, i): MechaUpgrade => {
-      if (i !== props.index) { return cloneUpgrade(u); }
-      return { ...cloneUpgrade(u), specialistLabel: value || undefined };
-    });
-    updateMecha(props.mecha.id, { upgrades: newUpgrades });
+    updateMecha(props.mecha.id, { upgrades: patchUpgrade(props.mecha.upgrades, props.index, { specialistLabel: value || undefined }) });
   };
 
   const handleSwapAttrToggle = (attr: MechaAttributeKey): void => {
     const next = nextSwapState(props.upgrade.swapAttributes, attr);
-    const newUpgrades = props.mecha.upgrades.map((u, i): MechaUpgrade => {
-      if (i !== props.index) { return cloneUpgrade(u); }
-      return { ...cloneUpgrade(u), swapAttributes: next };
-    });
-    updateMecha(props.mecha.id, { upgrades: newUpgrades });
+    updateMecha(props.mecha.id, { upgrades: patchUpgrade(props.mecha.upgrades, props.index, { swapAttributes: next }) });
   };
 
   const handleTerrainChange = (terrain: 'water' | 'space' | 'land'): void => {
-    const newUpgrades = props.mecha.upgrades.map((u, i): MechaUpgrade => {
-      if (i !== props.index) { return cloneUpgrade(u); }
-      return { ...cloneUpgrade(u), terrainType: terrain };
-    });
-    updateMecha(props.mecha.id, { upgrades: newUpgrades });
+    updateMecha(props.mecha.id, { upgrades: patchUpgrade(props.mecha.upgrades, props.index, { terrainType: terrain }) });
   };
 
   const handleCustomMpBlur = (e: FocusEvent): void => {
     const raw = (e.currentTarget as HTMLInputElement).value.trim();
     const value = Math.max(0, parseInt(raw, 10) || 0);
-    const newUpgrades = props.mecha.upgrades.map((u, i): MechaUpgrade => {
-      if (i !== props.index) { return cloneUpgrade(u); }
-      return { ...cloneUpgrade(u), customMpCost: value };
-    });
+    const newUpgrades = patchUpgrade(props.mecha.upgrades, props.index, { customMpCost: value });
     const newSpent = computeSpentMP(props.mecha.attributes, props.mecha.weapons, newUpgrades);
     updateMecha(props.mecha.id, { upgrades: newUpgrades, spentMP: newSpent });
   };
