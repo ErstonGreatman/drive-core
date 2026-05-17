@@ -6,7 +6,7 @@ import { mechaState } from '~/stores/mecha.ts';
 import { ExportMenu } from '../../components/ExportMenu';
 import { slugify } from '~/lib/share.ts';
 import { weaponTemplates, weaponKeywordsById, weaponTemplatesById, upgradeTemplatesById } from '~/data';
-import { totalMP, computeSpentMP } from '~/lib/mecha-costs.ts';
+import { totalMP, computeSpentMP, upgradeCostDisplay } from '~/lib/mecha-costs.ts';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
@@ -37,25 +37,16 @@ const TERRAIN_LABELS: Record<string, string> = {
 
 // ── Helpers ────────────────────────────────────────────────────────────────────
 
-function keywordName(kw: string): string {
-  return weaponKeywordsById[kw]?.name ?? (kw.charAt(0).toUpperCase() + kw.slice(1));
-}
+const keywordName = (kw: string): string =>
+  weaponKeywordsById[kw]?.name ?? (kw.charAt(0).toUpperCase() + kw.slice(1));
 
-function areaLabel(area: string): string {
-  return area.charAt(0).toUpperCase() + area.slice(1);
-}
+const areaLabel = (area: string): string =>
+  area.charAt(0).toUpperCase() + area.slice(1);
 
 // ── Sub-components ─────────────────────────────────────────────────────────────
 
-function UpgradeEntry(props: { upgrade: MechaUpgrade; showArea: boolean }): JSX.Element {
+const UpgradeEntry = (props: { upgrade: MechaUpgrade; showArea: boolean }): JSX.Element => {
   const u = () => props.upgrade;
-  const displayCost = () => {
-    if (u().templateId === 'invincible-super-combination') { return u().customMpCost ?? 0; }
-    if (u().templateId === 'superior-morphing') {
-      return 20 + Math.max(0, (u().formPools?.length ?? 2) - 2) * 10;
-    }
-    return u().mpCost;
-  };
   const templateName = () => u().templateId ? upgradeTemplatesById[u().templateId!]?.name : undefined;
 
   return (
@@ -70,7 +61,7 @@ function UpgradeEntry(props: { upgrade: MechaUpgrade; showArea: boolean }): JSX.
             <span class="text-xs text-muted-foreground">— {u().specialistLabel}</span>
           </Show>
         </div>
-        <Badge variant="muted" class="font-mono text-[10px] px-1.5 py-0 shrink-0">{displayCost()} MP</Badge>
+        <Badge variant="muted" class="font-mono text-[10px] px-1.5 py-0 shrink-0">{upgradeCostDisplay(u())}</Badge>
       </div>
       <Show when={templateName() && templateName() !== u().name}>
         <p class="text-[11px] text-muted-foreground">{templateName()}</p>
@@ -170,7 +161,7 @@ function UpgradeEntry(props: { upgrade: MechaUpgrade; showArea: boolean }): JSX.
   );
 }
 
-function WeaponEntry(props: { weapon: MechaWeapon; isDefault?: boolean }): JSX.Element {
+const WeaponEntry = (props: { weapon: MechaWeapon; isDefault?: boolean }): JSX.Element => {
   const w = () => props.weapon;
   const templateName = () => w().templateId ? weaponTemplatesById[w().templateId!]?.name : undefined;
   return (
@@ -234,7 +225,7 @@ export interface MechaSheetViewProps {
   editHref?: string;
 }
 
-export function MechaSheetView(props: MechaSheetViewProps): JSX.Element {
+export const MechaSheetView = (props: MechaSheetViewProps): JSX.Element => {
   const mpTotal = createMemo(() => totalMP(props.mecha.bonusMP));
   const mpSpent = createMemo(() =>
     computeSpentMP(props.mecha.attributes, props.mecha.weapons, props.mecha.upgrades),
@@ -424,11 +415,11 @@ export function MechaSheetView(props: MechaSheetViewProps): JSX.Element {
       </div>
     </div>
   );
-}
+};
 
 // ── Route default export ───────────────────────────────────────────────────────
 
-export default function MechaSheet(): JSX.Element {
+const MechaSheet = (): JSX.Element => {
   const params = useParams<{ id: string }>();
   const mecha = () => mechaState.mecha.find((m) => m.id === params.id);
 
@@ -446,4 +437,6 @@ export default function MechaSheet(): JSX.Element {
       )}
     </Show>
   );
-}
+};
+
+export default MechaSheet;

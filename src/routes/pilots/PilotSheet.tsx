@@ -8,11 +8,11 @@ import { slugify } from '~/lib/share.ts';
 import {
   skillsById,
   traitsById,
-  genrePowers,
   defaultGenrePowers,
   genrePowersById,
 } from '~/data';
-import type { GenrePowerDefinition, TraitDefinition } from '~/data';
+import { alternativesByDefaultId, defaultAndAlternativeIds } from '~/lib/genrePowerRules';
+import { buildFreeDeathblowMap, enrichTraitsWithMeta } from '~/lib/traitRules';
 import { powerLevel, totalCP, computeSpentCP } from '~/lib/pilot-costs.ts';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
@@ -22,16 +22,6 @@ import { cn } from '~/lib/utils.ts';
 import type { Pilot } from '~/types';
 
 // ── Module-level data ──────────────────────────────────────────────────────────
-
-const alternativesByDefaultId: Record<string, GenrePowerDefinition> = {};
-const defaultAndAlternativeIds = new Set<string>();
-for (const p of genrePowers) {
-  if (p.isDefault) { defaultAndAlternativeIds.add(p.id); }
-  if (p.alternativeFor) {
-    alternativesByDefaultId[p.alternativeFor] = p;
-    defaultAndAlternativeIds.add(p.id);
-  }
-}
 
 const PILOT_ATTRS = [
   { key: 'fitness' as const, label: 'Fitness' },
@@ -58,7 +48,7 @@ export interface PilotSheetViewProps {
   editHref?: string;
 }
 
-export function PilotSheetView(props: PilotSheetViewProps): JSX.Element {
+export const PilotSheetView = (props: PilotSheetViewProps): JSX.Element => {
   const pl = createMemo(() => powerLevel(props.pilot.experience));
   const cpTotal = createMemo(() => totalCP(props.pilot.experience));
   const cpSpent = createMemo(() =>
@@ -67,30 +57,9 @@ export function PilotSheetView(props: PilotSheetViewProps): JSX.Element {
   const defense = () => props.pilot.attributes.awareness + 5;
   const plotArmorCap = () => props.pilot.attributes.willpower * 3;
 
-  const freeDeathblowMap = createMemo(() => {
-    const map = new Map<string, number>();
-    for (const s of props.pilot.skills) {
-      for (const id of (s.freeDeathblowTraitIds ?? [])) {
-        map.set(id, (map.get(id) ?? 0) + 1);
-      }
-    }
-    return map;
-  });
-
-  const traitsWithMeta = createMemo(() => {
-    const remaining = new Map(freeDeathblowMap());
-    return props.pilot.traits.map((entry) => {
-      const def = traitsById[entry.traitId] as TraitDefinition | undefined;
-      if (!def) { return null; }
-      let isFree = false;
-      const count = remaining.get(entry.traitId) ?? 0;
-      if (count > 0 && def.traitCategory === 'deathblow') {
-        isFree = true;
-        remaining.set(entry.traitId, count - 1);
-      }
-      return { entry, def, isFree };
-    }).filter((x): x is NonNullable<typeof x> => x !== null);
-  });
+  const traitsWithMeta = createMemo(() =>
+    enrichTraitsWithMeta(props.pilot.traits, buildFreeDeathblowMap(props.pilot.skills)),
+  );
 
   const additionalPowerIds = createMemo(() =>
     props.pilot.genrePowerIds.filter((id) => !defaultAndAlternativeIds.has(id)),
@@ -356,11 +325,11 @@ export function PilotSheetView(props: PilotSheetViewProps): JSX.Element {
       </div>
     </div>
   );
-}
+};
 
 // ── Route default export ───────────────────────────────────────────────────────
 
-export default function PilotSheet(): JSX.Element {
+const PilotSheet = (): JSX.Element => {
   const params = useParams<{ id: string }>();
   const pilot = () => pilotState.pilots.find((p) => p.id === params.id);
 
@@ -378,4 +347,6 @@ export default function PilotSheet(): JSX.Element {
       )}
     </Show>
   );
-}
+};
+
+export default PilotSheet;
