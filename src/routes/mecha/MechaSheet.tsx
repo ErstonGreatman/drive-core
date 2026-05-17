@@ -5,7 +5,7 @@ import { ChevronLeft, Pencil } from 'lucide-solid';
 import { mechaState } from '~/stores/mecha.ts';
 import { ExportMenu } from '../../components/ExportMenu';
 import { slugify } from '~/lib/share.ts';
-import { weaponTemplates, weaponKeywordsById } from '~/data';
+import { weaponTemplates, weaponKeywordsById, weaponTemplatesById, upgradeTemplatesById } from '~/data';
 import { totalMP, computeSpentMP } from '~/lib/mecha-costs.ts';
 import { Badge } from '../../components/ui/badge';
 import { Button } from '../../components/ui/button';
@@ -49,10 +49,14 @@ function areaLabel(area: string): string {
 
 function UpgradeEntry(props: { upgrade: MechaUpgrade; showArea: boolean }): JSX.Element {
   const u = () => props.upgrade;
-  const displayCost = () =>
-    u().templateId === 'invincible-super-combination'
-      ? (u().customMpCost ?? 0)
-      : u().mpCost;
+  const displayCost = () => {
+    if (u().templateId === 'invincible-super-combination') { return u().customMpCost ?? 0; }
+    if (u().templateId === 'superior-morphing') {
+      return 20 + Math.max(0, (u().formPools?.length ?? 2) - 2) * 10;
+    }
+    return u().mpCost;
+  };
+  const templateName = () => u().templateId ? upgradeTemplatesById[u().templateId!]?.name : undefined;
 
   return (
     <div class="py-2 border-b border-border/40 last:border-0">
@@ -68,6 +72,9 @@ function UpgradeEntry(props: { upgrade: MechaUpgrade; showArea: boolean }): JSX.
         </div>
         <Badge variant="muted" class="font-mono text-[10px] px-1.5 py-0 shrink-0">{displayCost()} MP</Badge>
       </div>
+      <Show when={templateName() && templateName() !== u().name}>
+        <p class="text-[11px] text-muted-foreground">{templateName()}</p>
+      </Show>
       <p class="text-xs text-muted-foreground mt-0.5 leading-snug">{u().effect}</p>
 
       {/* Frame / Transformation: swap indicator */}
@@ -86,25 +93,76 @@ function UpgradeEntry(props: { upgrade: MechaUpgrade; showArea: boolean }): JSX.
         </p>
       </Show>
 
+      {/* Superior Morphing form pools */}
+      <Show when={u().formPools && u().formPools!.length > 0}>
+        <div class="mt-1.5 pl-3 border-l border-border space-y-2">
+          <For each={u().formPools!}>
+            {(pool) => (
+              <div class="space-y-0.5">
+                <p class="text-xs font-medium text-foreground">{pool.label}</p>
+                <Show when={pool.swapAttributes && pool.swapAttributes[0] !== pool.swapAttributes[1]}>
+                  <p class="text-xs text-primary">
+                    {SWAP_ATTR_LABELS[pool.swapAttributes![0]] ?? pool.swapAttributes![0]}
+                    {' ↔ '}
+                    {SWAP_ATTR_LABELS[pool.swapAttributes![1]] ?? pool.swapAttributes![1]}
+                  </p>
+                </Show>
+                <For each={pool.weapons}>
+                  {(w) => (
+                    <div class="text-xs text-muted-foreground">
+                      <span class="font-medium text-foreground">{w.name}</span>
+                      {' · '}{w.keywords.map(keywordName).join(' / ')}
+                    </div>
+                  )}
+                </For>
+                <For each={pool.upgrades}>
+                  {(sub) => (
+                    <div class="text-xs text-muted-foreground">
+                      <span class="font-medium text-foreground">{sub.name}</span>
+                      {' · '}{sub.mpCost} MP
+                    </div>
+                  )}
+                </For>
+                <Show when={pool.weapons.length === 0 && pool.upgrades.length === 0 && !pool.swapAttributes}>
+                  <p class="text-[11px] text-muted-foreground italic">Empty form</p>
+                </Show>
+              </div>
+            )}
+          </For>
+        </div>
+      </Show>
+
       {/* Expansion Pack / Secret Equipment sub-items */}
       <Show when={u().subItems && (u().subItems!.weapons.length > 0 || u().subItems!.upgrades.length > 0)}>
         <div class="mt-1.5 pl-3 border-l border-border space-y-0.5">
           <For each={u().subItems!.weapons}>
-            {(w) => (
-              <p class="text-xs text-muted-foreground">
-                <span class="font-medium text-foreground">{w.name}</span>
-                {' · '}{w.keywords.map(keywordName).join(' / ')}
-              </p>
-            )}
+            {(w) => {
+              const tName = w.templateId ? weaponTemplatesById[w.templateId!]?.name : undefined;
+              return (
+                <div class="text-xs text-muted-foreground">
+                  <span class="font-medium text-foreground">{w.name}</span>
+                  <Show when={tName && tName !== w.name}>
+                    <span class="text-[10px]"> ({tName})</span>
+                  </Show>
+                  {' · '}{w.keywords.map(keywordName).join(' / ')}
+                </div>
+              );
+            }}
           </For>
           <For each={u().subItems!.upgrades}>
-            {(sub) => (
-              <p class="text-xs text-muted-foreground">
-                <span class="font-medium text-foreground">{sub.name}</span>
-                {sub.specialistLabel && ` (${sub.specialistLabel})`}
-                {' · '}{sub.mpCost} MP
-              </p>
-            )}
+            {(sub) => {
+              const tName = sub.templateId ? upgradeTemplatesById[sub.templateId!]?.name : undefined;
+              return (
+                <div class="text-xs text-muted-foreground">
+                  <span class="font-medium text-foreground">{sub.name}</span>
+                  <Show when={tName && tName !== sub.name}>
+                    <span class="text-[10px]"> ({tName})</span>
+                  </Show>
+                  {sub.specialistLabel && ` (${sub.specialistLabel})`}
+                  {' · '}{sub.mpCost} MP
+                </div>
+              );
+            }}
           </For>
         </div>
       </Show>
@@ -114,6 +172,7 @@ function UpgradeEntry(props: { upgrade: MechaUpgrade; showArea: boolean }): JSX.
 
 function WeaponEntry(props: { weapon: MechaWeapon; isDefault?: boolean }): JSX.Element {
   const w = () => props.weapon;
+  const templateName = () => w().templateId ? weaponTemplatesById[w().templateId!]?.name : undefined;
   return (
     <div class="py-2 border-b border-border/40 last:border-0">
       <div class="flex items-start justify-between gap-2">
@@ -142,6 +201,9 @@ function WeaponEntry(props: { weapon: MechaWeapon; isDefault?: boolean }): JSX.E
           <Badge variant="muted" class="font-mono text-[10px] px-1.5 py-0 shrink-0">5 MP</Badge>
         </Show>
       </div>
+      <Show when={templateName() && templateName() !== w().name}>
+        <p class="text-[11px] text-muted-foreground">{templateName()}</p>
+      </Show>
       <Show when={w().energyCost}>
         <p class="text-xs text-muted-foreground mt-0.5">Energy cost: {w().energyCost}</p>
       </Show>
@@ -332,7 +394,7 @@ export function MechaSheetView(props: MechaSheetViewProps): JSX.Element {
                   const asWeapon: MechaWeapon = {
                     id: template.id,
                     templateId: template.id,
-                    name: template.name,
+                    name: props.mecha.defaultWeaponNames?.[template.id] ?? template.name,
                     area: 'core',
                     keywords: template.keywords,
                     energyCost: template.energyCost,

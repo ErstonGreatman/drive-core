@@ -39,6 +39,18 @@ export const MechaSubUpgradeSchema = z.object({
   specialistLabel: z.string().optional(),
 });
 
+// ── Form Pools (Superior Morphing) ───────────────────────────────────────────
+// Must be defined before MechaUpgradeSchema to avoid runtime ReferenceError
+
+export const FormPoolSchema = z.object({
+  id: z.string(),
+  label: z.string(),
+  // Set when this form swaps two attribute values (Transformation-type)
+  swapAttributes: z.tuple([MechaAttributeKeySchema, MechaAttributeKeySchema]).optional(),
+  weapons: z.array(MechaWeaponSchema),
+  upgrades: z.array(MechaSubUpgradeSchema),
+});
+
 export const MechaUpgradeSchema = z.object({
   id: z.string(),
   templateId: z.string().optional(),
@@ -62,6 +74,8 @@ export const MechaUpgradeSchema = z.object({
     weapons: z.array(MechaWeaponSchema),
     upgrades: z.array(MechaSubUpgradeSchema),
   }).optional(),
+  // Superior Morphing: one entry per alternate form (minimum 2; base cost 20 MP + 10 MP per form beyond 2)
+  formPools: z.array(FormPoolSchema).optional(),
 });
 
 // ── Threshold Layers ──────────────────────────────────────────────────────────
@@ -94,6 +108,8 @@ export const MechaSchema = z.object({
   // Default Weapons (CQC and Vulcans) are implicit — always present, free, and Internal.
   weapons: z.array(MechaWeaponSchema),
   upgrades: z.array(MechaUpgradeSchema),
+  // Overridden display names for default weapons (CQC / Vulcans), keyed by template id
+  defaultWeaponNames: z.record(z.string(), z.string()).optional(),
 
   // Live play state ────────────────────────────────────────────────────────────
 
@@ -124,6 +140,7 @@ export const MechaSchema = z.object({
 export type MechaWeapon = z.infer<typeof MechaWeaponSchema>;
 export type MechaSubUpgrade = z.infer<typeof MechaSubUpgradeSchema>;
 export type MechaUpgrade = z.infer<typeof MechaUpgradeSchema>;
+export type FormPool = z.infer<typeof FormPoolSchema>;
 export type ThresholdLayer = z.infer<typeof ThresholdLayerSchema>;
 export type Mecha = z.infer<typeof MechaSchema>;
 export type { MechaAttributes } from '../data/schemas/mecha-template';

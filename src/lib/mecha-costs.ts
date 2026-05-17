@@ -25,11 +25,15 @@ export function computeSpentMP(
   // All weapons in weapons[] are purchased (5 MP each); default weapons (CQC/Vulcans) are implicit
   const weaponCost = weapons.length * 5;
   const upgradeCost = upgrades.reduce((sum, u) => {
-    // Invincible Super Combination uses a variable PL-scaled cost instead of its stored mpCost
-    const baseCost = u.templateId === 'invincible-super-combination'
-      ? (u.customMpCost ?? 0)
-      : u.mpCost;
-    // Expansion Pack and Secret Equipment sub-items are self-contained within the upgrade cost
+    let baseCost: number;
+    if (u.templateId === 'invincible-super-combination') {
+      baseCost = u.customMpCost ?? 0;
+    } else if (u.templateId === 'superior-morphing') {
+      // Base 20 MP includes 2 forms; each additional form costs 10 MP
+      baseCost = 20 + Math.max(0, (u.formPools?.length ?? 2) - 2) * 10;
+    } else {
+      baseCost = u.mpCost;
+    }
     return sum + baseCost;
   }, 0);
   return attrCost + weaponCost + upgradeCost;
