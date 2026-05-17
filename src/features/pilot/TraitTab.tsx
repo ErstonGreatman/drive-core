@@ -5,6 +5,8 @@ import { updatePilot } from '~/stores/pilots';
 import { traits, traitsById, skillsById } from '~/data';
 import type { TraitDefinition } from '~/data';
 import { computeSpentCP } from '~/lib/pilot-costs';
+import { cloneTraitEntry } from '~/lib/pilotClones';
+import { buildFreeDeathblowMap, enrichTraitsWithMeta } from '~/lib/traitRules';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 import { Input } from '~/components/ui/input';
@@ -13,15 +15,6 @@ import { cn } from '~/lib/utils';
 
 interface TraitTabProps {
   pilot: Pilot;
-}
-
-function cloneTraitEntry(t: PilotTraitEntry): PilotTraitEntry {
-  return {
-    traitId: t.traitId,
-    specialistLabel: t.specialistLabel,
-    chosenMiracleSkillId: t.chosenMiracleSkillId,
-    miracleTier: t.miracleTier,
-  };
 }
 
 // ── Taken Trait Card ──────────────────────────────────────────────────────────
@@ -34,8 +27,8 @@ interface TakenTraitCardProps {
   isFreeDeathblow: boolean;
 }
 
-function TakenTraitCard(props: TakenTraitCardProps): JSX.Element {
-  function handleRemove(): void {
+const TakenTraitCard = (props: TakenTraitCardProps): JSX.Element => {
+  const handleRemove = (): void => {
     const newTraits = props.pilot.traits
       .filter((_, i) => i !== props.index)
       .map(cloneTraitEntry);
@@ -43,7 +36,7 @@ function TakenTraitCard(props: TakenTraitCardProps): JSX.Element {
     updatePilot(props.pilot.id, { traits: newTraits, spentCP: newSpent });
   }
 
-  function handleLabelBlur(e: FocusEvent): void {
+  const handleLabelBlur = (e: FocusEvent): void => {
     const value = (e.currentTarget as HTMLInputElement).value.trim();
     const newTraits = props.pilot.traits.map((t, i): PilotTraitEntry => {
       if (i === props.index) {
@@ -54,7 +47,7 @@ function TakenTraitCard(props: TakenTraitCardProps): JSX.Element {
     updatePilot(props.pilot.id, { traits: newTraits });
   }
 
-  function handleMiracleChange(skillId: string): void {
+  const handleMiracleChange = (skillId: string): void => {
     const newTraits = props.pilot.traits.map((t, i): PilotTraitEntry => {
       if (i === props.index) {
         return { ...cloneTraitEntry(t), chosenMiracleSkillId: skillId };
@@ -64,7 +57,7 @@ function TakenTraitCard(props: TakenTraitCardProps): JSX.Element {
     updatePilot(props.pilot.id, { traits: newTraits });
   }
 
-  function handleTierChange(tier: 'specialist' | 'generalist'): void {
+  const handleTierChange = (tier: 'specialist' | 'generalist'): void => {
     const newTraits = props.pilot.traits.map((t, i): PilotTraitEntry => {
       if (i === props.index) {
         return { ...cloneTraitEntry(t), miracleTier: tier };
@@ -171,12 +164,12 @@ interface TraitRowProps {
   alreadyTaken: boolean;
 }
 
-function TraitRow(props: TraitRowProps): JSX.Element {
+const TraitRow = (props: TraitRowProps): JSX.Element => {
   const [justAdded, setJustAdded] = createSignal(false);
   let flashTimer: ReturnType<typeof setTimeout> | undefined;
   onCleanup(() => clearTimeout(flashTimer));
 
-  function handleAdd(): void {
+  const handleAdd = (): void => {
     const newEntry: PilotTraitEntry = { traitId: props.def.id };
     const newTraits = [...props.pilot.traits.map(cloneTraitEntry), newEntry];
     const newSpent = computeSpentCP(props.pilot.attributes, props.pilot.skills, newTraits, skillsById, traitsById);
@@ -236,33 +229,11 @@ const CATEGORIES = [
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
-export function TraitTab(props: TraitTabProps): JSX.Element {
+export const TraitTab = (props: TraitTabProps): JSX.Element => {
   const [activeCategory, setActiveCategory] = createSignal<string>('general');
 
-  // Build the set of free Deathblow trait IDs (with count handling)
-  const freeDeathblowMap = (): Map<string, number> => {
-    const map = new Map<string, number>();
-    for (const entry of props.pilot.skills) {
-      for (const id of (entry.freeDeathblowTraitIds ?? [])) {
-        map.set(id, (map.get(id) ?? 0) + 1);
-      }
-    }
-    return map;
-  };
-
-  const takenTraitsWithMeta = () => {
-    const remaining = new Map(freeDeathblowMap());
-    return props.pilot.traits.map((entry, index) => {
-      const def = traitsById[entry.traitId];
-      let isFree = false;
-      const count = remaining.get(entry.traitId) ?? 0;
-      if (count > 0 && def?.traitCategory === 'deathblow') {
-        isFree = true;
-        remaining.set(entry.traitId, count - 1);
-      }
-      return { entry, def, index, isFree };
-    }).filter((x): x is typeof x & { def: TraitDefinition } => !!x.def);
-  };
+  const takenTraitsWithMeta = () =>
+    enrichTraitsWithMeta(props.pilot.traits, buildFreeDeathblowMap(props.pilot.skills));
 
   const takenIds = () => new Set(props.pilot.traits.map((t) => t.traitId));
 

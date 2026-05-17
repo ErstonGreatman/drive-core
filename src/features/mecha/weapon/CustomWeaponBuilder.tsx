@@ -9,27 +9,12 @@ import { Input } from '~/components/ui/input';
 import { cn } from '~/lib/utils';
 import * as DialogPrimitive from '@kobalte/core/dialog';
 import { cloneWeapon } from './weaponUtils';
-
-const BASE_WP = { melee: 2, shooting: 1 } as const;
-type BaseType = keyof typeof BASE_WP;
-
-const ABILITY_GROUPS: { label: string; ids: string[] }[] = [
-  { label: 'Advantages', ids: ['conditional-advantage', 'innate-advantage', 'additional-disadvantage-when-suppressing'] },
-  { label: 'Range & Area', ids: ['long-range', 'blast-1', 'blast-2', 'blast-3', 'line'] },
-  { label: 'Special', ids: ['crippling', 'beam', 'remote'] },
-  { label: 'Drawbacks', ids: ['slow', 'one-shot', 'unreliable', 'overheating'] },
-];
-
-const AREA_EXCLUSIVE_IDS = new Set(['blast-1', 'blast-2', 'blast-3', 'line']);
-const DRAWBACK_IDS = ['slow', 'one-shot', 'unreliable', 'overheating'];
-
-const ABILITY_KEYWORD: Record<string, string> = {
-  'beam': 'beam', 'long-range': 'long-range',
-  'blast-1': 'blast', 'blast-2': 'blast', 'blast-3': 'blast',
-  'line': 'line', 'crippling': 'crippling', 'slow': 'slow',
-  'one-shot': 'one-shot', 'unreliable': 'unreliable',
-  'overheating': 'overheating', 'remote': 'remote',
-};
+import {
+  BASE_WP, ABILITY_GROUPS, ABILITY_KEYWORD,
+  remainingWP, isBeam, beamBoostCost, hasInnateWithoutDrawback,
+  canSelectAbility, canDeselectAbility, buildKeywords,
+} from './weaponBuilderRules';
+import type { BaseType } from './weaponBuilderRules';
 
 interface CustomWeaponBuilderProps {
   mecha: Mecha;
@@ -43,43 +28,17 @@ export const CustomWeaponBuilder = (props: CustomWeaponBuilderProps): JSX.Elemen
   const [selected, setSelected] = createSignal(new Set<string>());
   const [abilityLabels, setAbilityLabels] = createSignal<Record<string, string>>({});
 
-  const remainingWP = () => {
-    const spent = [...selected()].reduce((sum, id) => sum + (weaponAbilitiesById[id]?.wpCost ?? 0), 0);
-    return BASE_WP[baseType()] - spent;
-  };
-
-  const isBeam = () => selected().has('beam');
-
-  const boostCost = () =>
-    1 + [...selected()].filter((id) => id !== 'beam' && (weaponAbilitiesById[id]?.wpCost ?? 0) >= 0).length;
-
-  const hasInnateWithoutDrawback = () =>
-    selected().has('innate-advantage') && !DRAWBACK_IDS.some((id) => selected().has(id));
-
-  const canSave = () => name().trim() !== '' && remainingWP() >= 0 && !hasInnateWithoutDrawback();
-
-  const canSelectAbility = (id: string): boolean => {
-    const def = weaponAbilitiesById[id];
-    if (!def) { return false; }
-    if (remainingWP() - def.wpCost < 0) { return false; }
-    if (AREA_EXCLUSIVE_IDS.has(id) && [...selected()].some((s) => AREA_EXCLUSIVE_IDS.has(s))) { return false; }
-    if (id === 'slow' && selected().has('one-shot')) { return false; }
-    return !(id === 'one-shot' && selected().has('slow'));
-  };
-
-  const canDeselectAbility = (id: string): boolean => {
-    const def = weaponAbilitiesById[id];
-    if (!def) { return true; }
-    return remainingWP() + def.wpCost >= 0;
-  };
+  const wp = () => remainingWP(selected(), baseType());
+  const beam = () => isBeam(selected());
+  const canSave = () => name().trim() !== '' && wp() >= 0 && !hasInnateWithoutDrawback(selected());
 
   const toggleAbility = (id: string): void => {
     const next = new Set(selected());
     if (next.has(id)) {
-      if (!canDeselectAbility(id)) { return; }
+      if (!canDeselectAbility(id, next, baseType())) { return; }
       next.delete(id);
     } else {
-      if (!canSelectAbility(id)) { return; }
+      if (!canSelectAbility(id, next, baseType())) { return; }
       next.add(id);
     }
     setSelected(next);
@@ -88,11 +47,7 @@ export const CustomWeaponBuilder = (props: CustomWeaponBuilderProps): JSX.Elemen
   const handleSave = (): void => {
     const n = name().trim();
     if (!n) { return; }
-    const keywords: string[] = [baseType()];
-    for (const id of selected()) {
-      const kw = ABILITY_KEYWORD[id];
-      if (kw && !keywords.includes(kw)) { keywords.push(kw); }
-    }
+    const keywords = buildKeywords(baseType(), selected());
     const abilities = [...selected()]
       .map((id) => {
         const def = weaponAbilitiesById[id];
@@ -103,7 +58,7 @@ export const CustomWeaponBuilder = (props: CustomWeaponBuilderProps): JSX.Elemen
       .filter((a): a is NonNullable<typeof a> => a !== null);
     const newWeapon: MechaWeapon = {
       id: crypto.randomUUID(), name: n, area: 'arms', keywords,
-      energyCost: isBeam() ? 1 : undefined, abilities, isCustom: true,
+      energyCost: beam() ? 1 : undefined, abilities, isCustom: true,
     };
     const newWeapons = [...props.mecha.weapons.map(cloneWeapon), newWeapon];
     const newSpent = computeSpentMP(props.mecha.attributes, newWeapons, props.mecha.upgrades);
@@ -158,14 +113,14 @@ export const CustomWeaponBuilder = (props: CustomWeaponBuilderProps): JSX.Elemen
                   )}
                 </For>
               </div>
-              <span class={cn('text-sm font-mono shrink-0', remainingWP() < 0 ? 'text-destructive font-semibold' : 'text-muted-foreground')}>
-                {remainingWP()} / {BASE_WP[baseType()]} WP
+              <span class={cn('text-sm font-mono shrink-0', wp() < 0 ? 'text-destructive font-semibold' : 'text-muted-foreground')}>
+                {wp()} / {BASE_WP[baseType()]} WP
               </span>
             </div>
 
-            <Show when={isBeam()}>
+            <Show when={beam()}>
               <div class="text-xs text-muted-foreground bg-muted/40 rounded-md px-3 py-2 leading-relaxed">
-                Base energy 1 · Boost energy {boostCost()}. All abilities except Remote apply only when Boosted.
+                Base energy 1 · Boost energy {beamBoostCost(selected())}. All abilities except Remote apply only when Boosted.
               </div>
             </Show>
 
@@ -180,7 +135,7 @@ export const CustomWeaponBuilder = (props: CustomWeaponBuilderProps): JSX.Elemen
                           const def = weaponAbilitiesById[id];
                           if (!def) { return null; }
                           const isSelected = () => selected().has(id);
-                          const isToggleable = () => isSelected() ? canDeselectAbility(id) : canSelectAbility(id);
+                          const isToggleable = () => isSelected() ? canDeselectAbility(id, selected(), baseType()) : canSelectAbility(id, selected(), baseType());
                           return (
                             <div>
                               <button

@@ -1,6 +1,16 @@
 import type { MechaAttributes } from '~/data/schemas/mecha-template';
 import type { MechaWeapon, MechaUpgrade } from '~/types/mecha';
 
+export const upgradeCostDisplay = (upgrade: MechaUpgrade): string => {
+  if (upgrade.templateId === 'invincible-super-combination') {
+    return `${upgrade.customMpCost ?? 0} MP`;
+  }
+  if (upgrade.templateId === 'superior-morphing') {
+    return `${20 + Math.max(0, (upgrade.formPools?.length ?? 2) - 2) * 10} MP`;
+  }
+  return upgrade.mpCost > 0 ? `${upgrade.mpCost} MP` : 'Free';
+};
+
 export function totalMP(bonusMP: number): number {
   return 100 + bonusMP;
 }

@@ -10,7 +10,10 @@ import { Badge } from '~/components/ui/badge';
 import { Input } from '~/components/ui/input';
 import { cn } from '~/lib/utils';
 import * as DialogPrimitive from '@kobalte/core/dialog';
-import { FORM_POOL_CAPACITY, SWAP_ATTR_OPTIONS, cloneUpgrade, cloneSubWeapon, cloneSubUpgrade, cloneFormPool, cap } from './upgradeUtils';
+import {
+  FORM_POOL_CAPACITY, SWAP_ATTR_OPTIONS, cloneUpgrade, cloneSubWeapon, cloneSubUpgrade, cloneFormPool, cap,
+  isAttrSelected, isSwapComplete, isAttrDisabled, nextSwapState,
+} from './upgradeUtils';
 import { PoolItemBrowser } from './PoolItemBrowser';
 
 interface FormPoolModalProps {
@@ -68,27 +71,9 @@ export const FormPoolModal = (props: FormPoolModalProps): JSX.Element => {
   };
 
   const swapAttrs = () => pool()?.swapAttributes;
-  const isAttrSelected = (attr: MechaAttributeKey): boolean => {
-    const s = swapAttrs();
-    if (!s) { return false; }
-    if (s[0] === s[1]) { return s[0] === attr; }
-    return s[0] === attr || s[1] === attr;
-  };
-  const isSwapComplete = (): boolean => { const s = swapAttrs(); return !!s && s[0] !== s[1]; };
-  const isAttrDisabled = (attr: MechaAttributeKey): boolean => {
-    if (isAttrSelected(attr)) { return false; }
-    const s = swapAttrs();
-    return !!s && s[0] !== s[1];
-  };
 
   const handleSwapToggle = (attr: MechaAttributeKey): void => {
-    const current = pool()?.swapAttributes;
-    let next: [MechaAttributeKey, MechaAttributeKey] | undefined;
-    if (current?.includes(attr)) { next = undefined; }
-    else if (!current) { next = [attr, attr]; }
-    else if (current[0] === current[1]) { next = [current[0], attr]; }
-    else { next = [attr, attr]; }
-    patchActivePool((p) => ({ ...p, swapAttributes: next }));
+    patchActivePool((p) => ({ ...p, swapAttributes: nextSwapState(p.swapAttributes, attr) }));
   };
 
   const handleLabelInput = (e: InputEvent): void => {
@@ -217,18 +202,18 @@ export const FormPoolModal = (props: FormPoolModalProps): JSX.Element => {
 
                 <div class="space-y-1.5">
                   <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-                    Attribute Swap {isSwapComplete() ? ':' : '(optional)'}
+                    Attribute Swap {isSwapComplete(swapAttrs()) ? ':' : '(optional)'}
                   </p>
                   <div class="flex gap-1 flex-wrap">
                     <For each={SWAP_ATTR_OPTIONS}>
                       {(attr) => (
                         <button
                           onClick={() => handleSwapToggle(attr)}
-                          disabled={isAttrDisabled(attr)}
+                          disabled={isAttrDisabled(swapAttrs(), attr)}
                           class={cn(
                             'text-xs px-2 py-0.5 rounded border transition-colors capitalize',
-                            isAttrSelected(attr) ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:border-foreground',
-                            isAttrDisabled(attr) && 'opacity-40 cursor-not-allowed',
+                            isAttrSelected(swapAttrs(), attr) ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:border-foreground',
+                            isAttrDisabled(swapAttrs(), attr) && 'opacity-40 cursor-not-allowed',
                           )}
                         >
                           {attr}
@@ -241,7 +226,7 @@ export const FormPoolModal = (props: FormPoolModalProps): JSX.Element => {
                       </button>
                     </Show>
                   </div>
-                  <Show when={isSwapComplete()}>
+                  <Show when={isSwapComplete(swapAttrs())}>
                     <p class="text-xs text-primary">{cap(swapAttrs()![0])} ↔ {cap(swapAttrs()![1])}</p>
                   </Show>
                 </div>

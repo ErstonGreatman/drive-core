@@ -3,12 +3,15 @@ import { For, Show } from 'solid-js';
 import type { Mecha, MechaUpgrade, MechaAttributeKey } from '~/types/mecha';
 import type { UpgradeTemplateDefinition } from '~/data';
 import { updateMecha } from '~/stores/mecha';
-import { computeSpentMP } from '~/lib/mecha-costs';
+import { computeSpentMP, upgradeCostDisplay } from '~/lib/mecha-costs';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 import { Input } from '~/components/ui/input';
 import { cn } from '~/lib/utils';
-import { EXTERNAL_AREAS, SWAP_ATTR_OPTIONS, REPEATABLE_IDS, cloneUpgrade } from './upgradeUtils';
+import {
+  EXTERNAL_AREAS, SWAP_ATTR_OPTIONS, REPEATABLE_IDS, cloneUpgrade,
+  isAttrSelected, isSwapComplete, isAttrDisabled, nextSwapState,
+} from './upgradeUtils';
 import type { ExternalArea } from './upgradeUtils';
 import { SubPoolModal } from './SubPoolModal';
 import { FormPoolModal } from './FormPoolModal';
@@ -55,12 +58,7 @@ export const TakenUpgradeCard = (props: TakenUpgradeCardProps): JSX.Element => {
   };
 
   const handleSwapAttrToggle = (attr: MechaAttributeKey): void => {
-    const current = props.upgrade.swapAttributes;
-    let next: [MechaAttributeKey, MechaAttributeKey] | undefined;
-    if (current?.includes(attr)) { next = undefined; }
-    else if (!current) { next = [attr, attr]; }
-    else if (current[0] === current[1]) { next = [current[0], attr]; }
-    else { next = [attr, attr]; }
+    const next = nextSwapState(props.upgrade.swapAttributes, attr);
     const newUpgrades = props.mecha.upgrades.map((u, i): MechaUpgrade => {
       if (i !== props.index) { return cloneUpgrade(u); }
       return { ...cloneUpgrade(u), swapAttributes: next };
@@ -91,31 +89,9 @@ export const TakenUpgradeCard = (props: TakenUpgradeCardProps): JSX.Element => {
     props.upgrade.templateId === 'frame' || props.upgrade.templateId === 'transformation';
 
   const swapAttrs = () => props.upgrade.swapAttributes;
-  const isAttrSelected = (attr: MechaAttributeKey) => {
-    const s = swapAttrs();
-    if (!s) { return false; }
-    if (s[0] === s[1]) { return s[0] === attr; }
-    return s[0] === attr || s[1] === attr;
-  };
-  const isSwapComplete = () => { const s = swapAttrs(); return !!s && s[0] !== s[1]; };
-  const isAttrDisabled = (attr: MechaAttributeKey) => {
-    if (isAttrSelected(attr)) { return false; }
-    const s = swapAttrs();
-    return !!s && s[0] !== s[1];
-  };
 
   const isSubPool = () =>
     props.upgrade.templateId === 'expansion-pack' || props.upgrade.templateId === 'secret-equipment';
-
-  const displayCost = () => {
-    if (props.upgrade.templateId === 'invincible-super-combination') {
-      return `${props.upgrade.customMpCost ?? 0} MP`;
-    }
-    if (props.upgrade.templateId === 'superior-morphing') {
-      return `${20 + Math.max(0, (props.upgrade.formPools?.length ?? 2) - 2) * 10} MP`;
-    }
-    return props.upgrade.mpCost > 0 ? `${props.upgrade.mpCost} MP` : 'Free';
-  };
 
   // Suppress unused import warning — REPEATABLE_IDS is exported from upgradeUtils
   void REPEATABLE_IDS;
@@ -129,7 +105,7 @@ export const TakenUpgradeCard = (props: TakenUpgradeCardProps): JSX.Element => {
             <p class="text-[11px] text-muted-foreground mb-0.5">{props.def!.name}</p>
           </Show>
           <div class="flex items-center gap-1.5 flex-wrap">
-            <Badge variant="muted" class="text-[10px] px-1.5 py-0 font-mono">{displayCost()}</Badge>
+            <Badge variant="muted" class="text-[10px] px-1.5 py-0 font-mono">{upgradeCostDisplay(props.upgrade)}</Badge>
           </div>
 
           <Show when={props.upgrade.upgradeType === 'external'}>
@@ -168,18 +144,18 @@ export const TakenUpgradeCard = (props: TakenUpgradeCardProps): JSX.Element => {
           <Show when={isSwapUpgrade()}>
             <div class="mt-2 space-y-1">
               <p class="text-xs text-muted-foreground">
-                Choose two attributes to swap values{isSwapComplete() ? ':' : ' (select one, then another):'}
+                Choose two attributes to swap values{isSwapComplete(swapAttrs()) ? ':' : ' (select one, then another):'}
               </p>
               <div class="flex gap-1 flex-wrap">
                 <For each={SWAP_ATTR_OPTIONS}>
                   {(attr) => (
                     <button
                       onClick={() => handleSwapAttrToggle(attr)}
-                      disabled={isAttrDisabled(attr)}
+                      disabled={isAttrDisabled(swapAttrs(), attr)}
                       class={cn(
                         'text-xs px-2 py-0.5 rounded border transition-colors capitalize',
-                        isAttrSelected(attr) ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:border-foreground',
-                        isAttrDisabled(attr) && 'opacity-40 cursor-not-allowed',
+                        isAttrSelected(swapAttrs(), attr) ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:border-foreground',
+                        isAttrDisabled(swapAttrs(), attr) && 'opacity-40 cursor-not-allowed',
                       )}
                     >
                       {attr}

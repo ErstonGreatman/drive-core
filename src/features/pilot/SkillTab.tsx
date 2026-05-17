@@ -4,11 +4,9 @@ import type { Pilot, PilotSkillEntry, PilotTraitEntry } from '~/types/pilot';
 import { updatePilot } from '~/stores/pilots';
 import { skills, traits, skillsById, traitsById } from '~/data';
 import type { SkillDefinition, TraitDefinition } from '~/data';
-import {
-  computeSpentCP,
-  skillCost,
-  qualifiesForFreeDeathblows,
-} from '~/lib/pilot-costs';
+import { computeSpentCP, skillCost, qualifiesForFreeDeathblows } from '~/lib/pilot-costs';
+import { cloneSkillEntry, cloneTraitEntry } from '~/lib/pilotClones';
+import { isDeathblowSelectable, filterSkillsByQuery } from '~/lib/skillRules';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 import { Input } from '~/components/ui/input';
@@ -23,38 +21,6 @@ const deathblowTraits = traits.filter((t) => t.traitCategory === 'deathblow');
 const regularSkills = skills.filter((s) => !s.isMiracle);
 const miracleSkills = skills.filter((s) => s.isMiracle);
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function cloneSkillEntry(s: PilotSkillEntry): PilotSkillEntry {
-  return {
-    skillId: s.skillId,
-    type: s.type,
-    specialistLabel: s.specialistLabel,
-    freeDeathblowTraitIds: s.freeDeathblowTraitIds ? [...s.freeDeathblowTraitIds] : undefined,
-  };
-}
-
-function cloneTraitEntry(t: PilotTraitEntry): PilotTraitEntry {
-  return {
-    traitId: t.traitId,
-    specialistLabel: t.specialistLabel,
-    chosenMiracleSkillId: t.chosenMiracleSkillId,
-    miracleTier: t.miracleTier,
-  };
-}
-
-function isDeathblowSelectable(
-  trait: TraitDefinition,
-  currentFreeIds: string[],
-): boolean {
-  if (currentFreeIds.includes(trait.id)) { return true; }
-  const fiveCpCount = currentFreeIds.filter((id) => traitsById[id]?.cpCost === 5).length;
-  const tenCpCount = currentFreeIds.filter((id) => traitsById[id]?.cpCost === 10).length;
-  if (tenCpCount > 0) { return false; }
-  if (trait.cpCost === 10 && fiveCpCount > 0) { return false; }
-  return !(trait.cpCost === 5 && fiveCpCount >= 2);
-
-}
 
 // ── Free Deathblow Picker ─────────────────────────────────────────────────────
 
@@ -63,10 +29,10 @@ interface FreeDeathblowPickerProps {
   skillEntry: PilotSkillEntry;
 }
 
-function FreeDeathblowPicker(props: FreeDeathblowPickerProps): JSX.Element {
+const FreeDeathblowPicker = (props: FreeDeathblowPickerProps): JSX.Element => {
   const currentFreeIds = () => props.skillEntry.freeDeathblowTraitIds ?? [];
 
-  function toggle(trait: TraitDefinition): void {
+  const toggle = (trait: TraitDefinition): void => {
     const freeIds = currentFreeIds();
     const isSelected = freeIds.includes(trait.id);
 
@@ -148,8 +114,8 @@ interface TrainedSkillCardProps {
   def: SkillDefinition;
 }
 
-function TrainedSkillCard(props: TrainedSkillCardProps): JSX.Element {
-  function handleRemove(): void {
+const TrainedSkillCard = (props: TrainedSkillCardProps): JSX.Element => {
+  const handleRemove = (): void => {
     const freeIds = props.entry.freeDeathblowTraitIds ?? [];
     let newTraits = [...props.pilot.traits].map(cloneTraitEntry);
     for (const freeId of freeIds) {
@@ -163,7 +129,7 @@ function TrainedSkillCard(props: TrainedSkillCardProps): JSX.Element {
     updatePilot(props.pilot.id, { skills: newSkills, traits: newTraits, spentCP: newSpent });
   }
 
-  function handleTypeChange(newType: 'generalist' | 'specialist'): void {
+  const handleTypeChange = (newType: 'generalist' | 'specialist'): void => {
     const oldEntry = props.entry;
     const wasOffensive = qualifiesForFreeDeathblows(oldEntry, props.def);
     const newEntry: PilotSkillEntry = cloneSkillEntry(oldEntry);
@@ -188,7 +154,7 @@ function TrainedSkillCard(props: TrainedSkillCardProps): JSX.Element {
     updatePilot(props.pilot.id, { skills: newSkills, traits: newTraits, spentCP: newSpent });
   }
 
-  function handleLabelBlur(e: FocusEvent): void {
+  const handleLabelBlur = (e: FocusEvent): void => {
     const value = (e.currentTarget as HTMLInputElement).value.trim();
     if (value === props.entry.specialistLabel) { return; }
     const wasOffensive = qualifiesForFreeDeathblows(props.entry, props.def);
@@ -278,8 +244,8 @@ interface SkillRowProps {
   def: SkillDefinition;
 }
 
-function SkillRow(props: SkillRowProps): JSX.Element {
-  function addSkill(type: 'generalist' | 'specialist'): void {
+const SkillRow = (props: SkillRowProps): JSX.Element => {
+  const addSkill = (type: 'generalist' | 'specialist'): void => {
     const newEntry: PilotSkillEntry = { skillId: props.def.id, type };
     const newSkills = [...props.pilot.skills.map(cloneSkillEntry), newEntry];
     const newSpent = computeSpentCP(props.pilot.attributes, newSkills, props.pilot.traits, skillsById, traitsById);
@@ -329,21 +295,13 @@ function SkillRow(props: SkillRowProps): JSX.Element {
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
-export function SkillTab(props: SkillTabProps): JSX.Element {
+export const SkillTab = (props: SkillTabProps): JSX.Element => {
   const [search, setSearch] = createSignal('');
 
   const trainedIds = () => new Set(props.pilot.skills.map((s) => s.skillId));
 
-  function filterSkills(list: SkillDefinition[]): SkillDefinition[] {
-    const q = search().toLowerCase();
-    if (!q) { return list; }
-    return list.filter(
-      (s) => s.name.toLowerCase().includes(q) || s.defaultAttribute.includes(q),
-    );
-  }
-
-  const filteredRegular = () => filterSkills(regularSkills).filter((s) => !trainedIds().has(s.id));
-  const filteredMiracle = () => filterSkills(miracleSkills).filter((s) => !trainedIds().has(s.id));
+  const filteredRegular = () => filterSkillsByQuery(regularSkills, search()).filter((s) => !trainedIds().has(s.id));
+  const filteredMiracle = () => filterSkillsByQuery(miracleSkills, search()).filter((s) => !trainedIds().has(s.id));
 
   const trainedEntries = () =>
     props.pilot.skills.map((entry) => ({

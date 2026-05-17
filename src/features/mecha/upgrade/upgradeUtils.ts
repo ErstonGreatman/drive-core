@@ -1,5 +1,38 @@
 import type { MechaUpgrade, MechaSubUpgrade, MechaWeapon, FormPool, MechaAttributeKey } from '~/types/mecha';
 
+// ── Swap-attribute state machine (shared by TakenUpgradeCard and FormPoolModal) ─
+
+export const isAttrSelected = (
+  swapAttrs: [MechaAttributeKey, MechaAttributeKey] | undefined,
+  attr: MechaAttributeKey,
+): boolean => {
+  if (!swapAttrs) { return false; }
+  if (swapAttrs[0] === swapAttrs[1]) { return swapAttrs[0] === attr; }
+  return swapAttrs[0] === attr || swapAttrs[1] === attr;
+};
+
+export const isSwapComplete = (
+  swapAttrs: [MechaAttributeKey, MechaAttributeKey] | undefined,
+): boolean => !!swapAttrs && swapAttrs[0] !== swapAttrs[1];
+
+export const isAttrDisabled = (
+  swapAttrs: [MechaAttributeKey, MechaAttributeKey] | undefined,
+  attr: MechaAttributeKey,
+): boolean => {
+  if (isAttrSelected(swapAttrs, attr)) { return false; }
+  return !!swapAttrs && swapAttrs[0] !== swapAttrs[1];
+};
+
+export const nextSwapState = (
+  current: [MechaAttributeKey, MechaAttributeKey] | undefined,
+  attr: MechaAttributeKey,
+): [MechaAttributeKey, MechaAttributeKey] | undefined => {
+  if (current?.includes(attr)) { return undefined; }
+  if (!current) { return [attr, attr]; }
+  if (current[0] === current[1]) { return [current[0], attr]; }
+  return [attr, attr];
+};
+
 export const EXTERNAL_AREAS = ['head', 'torso', 'arms', 'legs'] as const;
 export type ExternalArea = (typeof EXTERNAL_AREAS)[number];
 

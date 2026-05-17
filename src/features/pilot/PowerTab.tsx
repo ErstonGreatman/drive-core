@@ -2,9 +2,12 @@ import type { JSX } from 'solid-js';
 import { createSignal, For, Show } from 'solid-js';
 import type { Pilot } from '~/types/pilot';
 import { updatePilot } from '~/stores/pilots';
-import { genrePowers, genrePowersById, defaultGenrePowers } from '~/data';
+import { genrePowersById, defaultGenrePowers } from '~/data';
 import type { GenrePowerDefinition } from '~/data';
 import { powerLevel } from '~/lib/pilot-costs';
+import {
+  POWER_CATEGORIES, alternativesByDefaultId, defaultAndAlternativeIds, additionalPowerPool,
+} from '~/lib/genrePowerRules';
 import { Button } from '~/components/ui/button';
 import { Badge } from '~/components/ui/badge';
 import { Separator } from '~/components/ui/separator';
@@ -14,32 +17,6 @@ interface PowerTabProps {
   pilot: Pilot;
 }
 
-// Build the alternative→default lookup once at module level
-const alternativesByDefaultId: Record<string, GenrePowerDefinition> = {};
-const defaultAndAlternativeIds = new Set<string>();
-
-for (const p of genrePowers) {
-  if (p.isDefault) { defaultAndAlternativeIds.add(p.id); }
-  if (p.alternativeFor) {
-    alternativesByDefaultId[p.alternativeFor] = p;
-    defaultAndAlternativeIds.add(p.id);
-  }
-}
-
-// Non-default, non-alternative powers grouped by category
-const additionalPowerPool = genrePowers.filter((p) => !defaultAndAlternativeIds.has(p.id));
-
-const POWER_CATEGORIES: Record<string, string> = {
-  champion: 'Champion',
-  trickster: 'Trickster',
-  tactician: 'Tactician',
-  miscellaneous: 'Miscellaneous',
-  rush: 'Rush',
-  restoration: 'Restoration',
-  boost: 'Boost',
-  limit: 'Limit',
-};
-
 // ── Default Power Slot ────────────────────────────────────────────────────────
 
 interface DefaultSlotProps {
@@ -47,13 +24,13 @@ interface DefaultSlotProps {
   defaultPower: GenrePowerDefinition;
 }
 
-function DefaultSlot(props: DefaultSlotProps): JSX.Element {
+const DefaultSlot = (props: DefaultSlotProps): JSX.Element => {
   const alternative = alternativesByDefaultId[props.defaultPower.id];
   const usingAlternative = () =>
     !!alternative && props.pilot.genrePowerIds.includes(alternative.id);
   const current = () => usingAlternative() ? alternative : props.defaultPower;
 
-  function toggleAlternative(): void {
+  const toggleAlternative = (): void => {
     if (!alternative) { return; }
     let newIds: string[];
     if (usingAlternative()) {
@@ -109,7 +86,7 @@ interface AdditionalSlotProps {
   slotIndex: number;
 }
 
-function AdditionalSlot(props: AdditionalSlotProps): JSX.Element {
+const AdditionalSlot = (props: AdditionalSlotProps): JSX.Element => {
   const [open, setOpen] = createSignal(false);
 
   // The IDs in genrePowerIds that are NOT defaults or alternatives are the additional powers
@@ -119,7 +96,7 @@ function AdditionalSlot(props: AdditionalSlotProps): JSX.Element {
   const selectedId = () => additionalIds()[props.slotIndex];
   const selected = () => selectedId() ? genrePowersById[selectedId()] : undefined;
 
-  function handleSelect(powerId: string): void {
+  const handleSelect = (powerId: string): void => {
     const current = additionalIds();
     const newAdditional = [...current];
     newAdditional[props.slotIndex] = powerId;
@@ -128,7 +105,7 @@ function AdditionalSlot(props: AdditionalSlotProps): JSX.Element {
     setOpen(false);
   }
 
-  function handleClear(): void {
+  const handleClear = (): void => {
     const current = additionalIds();
     const newAdditional = current.filter((_, i) => i !== props.slotIndex);
     const basePowerIds = props.pilot.genrePowerIds.filter((id) => defaultAndAlternativeIds.has(id));
@@ -243,7 +220,7 @@ function AdditionalSlot(props: AdditionalSlotProps): JSX.Element {
 
 // ── Main Component ────────────────────────────────────────────────────────────
 
-export function PowerTab(props: PowerTabProps): JSX.Element {
+export const PowerTab = (props: PowerTabProps): JSX.Element => {
   const pl = () => powerLevel(props.pilot.experience);
   const additionalSlots = () => pl();
 
