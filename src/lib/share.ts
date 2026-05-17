@@ -2,7 +2,7 @@ import { type Pilot, PilotSchema, type Mecha, MechaSchema } from '~/types';
 
 // ── Export ─────────────────────────────────────────────────────────────────────
 
-export function downloadJSON(data: unknown, filename: string): void {
+export const downloadJSON = (data: unknown, filename: string): void => {
   const json = JSON.stringify(data, null, 2);
   const blob = new Blob([json], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
@@ -14,17 +14,17 @@ export function downloadJSON(data: unknown, filename: string): void {
   a.click();
   document.body.removeChild(a);
   URL.revokeObjectURL(url);
-}
+};
 
-export async function copyJSONToClipboard(data: unknown): Promise<void> {
+export const copyJSONToClipboard = async (data: unknown): Promise<void> => {
   await navigator.clipboard.writeText(JSON.stringify(data, null, 2));
-}
+};
 
 // ── Import ─────────────────────────────────────────────────────────────────────
 
 type ParseResult<T> = { ok: true; data: T } | { ok: false; error: string };
 
-export function parsePilotJSON(text: string): ParseResult<Pilot> {
+export const parsePilotJSON = (text: string): ParseResult<Pilot> => {
   let raw: unknown;
   try {
     raw = JSON.parse(text);
@@ -36,9 +36,9 @@ export function parsePilotJSON(text: string): ParseResult<Pilot> {
     return { ok: false, error: 'Not a valid pilot build — the data does not match the expected format.' };
   }
   return { ok: true, data: result.data };
-}
+};
 
-export function parseMechaJSON(text: string): ParseResult<Mecha> {
+export const parseMechaJSON = (text: string): ParseResult<Mecha> => {
   let raw: unknown;
   try {
     raw = JSON.parse(text);
@@ -50,10 +50,9 @@ export function parseMechaJSON(text: string): ParseResult<Mecha> {
     return { ok: false, error: 'Not a valid mecha build — the data does not match the expected format.' };
   }
   return { ok: true, data: result.data };
-}
+};
 
 // ── Utilities ──────────────────────────────────────────────────────────────────
 
-export function slugify(name: string): string {
-  return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'export';
-}
+export const slugify = (name: string): string =>
+  name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || 'export';

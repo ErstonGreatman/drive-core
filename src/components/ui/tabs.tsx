@@ -9,7 +9,7 @@ export const Tabs = TabsPrimitive.Root;
 
 type TabsListProps = TabsPrimitive.TabsListProps & { class?: string };
 
-export function TabsList(props: TabsListProps): JSX.Element {
+export const TabsList = (props: TabsListProps): JSX.Element => {
   const [local, rest] = splitProps(props, ['class']);
   return (
     <TabsPrimitive.List
@@ -17,13 +17,13 @@ export function TabsList(props: TabsListProps): JSX.Element {
       {...rest}
     />
   );
-}
+};
 
 // ── Trigger ───────────────────────────────────────────────────────────────────
 
 type TabsTriggerProps = TabsPrimitive.TabsTriggerProps & { class?: string };
 
-export function TabsTrigger(props: TabsTriggerProps): JSX.Element {
+export const TabsTrigger = (props: TabsTriggerProps): JSX.Element => {
   const [local, rest] = splitProps(props, ['class']);
   return (
     <TabsPrimitive.Trigger
@@ -39,13 +39,13 @@ export function TabsTrigger(props: TabsTriggerProps): JSX.Element {
       {...rest}
     />
   );
-}
+};
 
 // ── Content ───────────────────────────────────────────────────────────────────
 
 type TabsContentProps = TabsPrimitive.TabsContentProps & { class?: string };
 
-export function TabsContent(props: TabsContentProps): JSX.Element {
+export const TabsContent = (props: TabsContentProps): JSX.Element => {
   const [local, rest] = splitProps(props, ['class']);
   return (
     <TabsPrimitive.Content
@@ -53,4 +53,4 @@ export function TabsContent(props: TabsContentProps): JSX.Element {
       {...rest}
     />
   );
-}
+};

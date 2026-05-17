@@ -4,7 +4,7 @@ import { useParams } from '@solidjs/router';
 import { viewerState } from '~/stores/viewer.ts';
 import { PilotSheetView } from '../pilots/PilotSheet';
 
-export default function ViewerPilotSheet(): JSX.Element {
+const ViewerPilotSheet = (): JSX.Element => {
   const params = useParams<{ id: string }>();
   const pilot = () => viewerState.pilots.find((p) => p.id === params.id);
 
@@ -22,4 +22,6 @@ export default function ViewerPilotSheet(): JSX.Element {
       )}
     </Show>
   );
-}
+};
+
+export default ViewerPilotSheet;

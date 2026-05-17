@@ -8,7 +8,7 @@ type SeparatorProps = SeparatorPrimitive.SeparatorRootProps & {
   orientation?: 'horizontal' | 'vertical';
 };
 
-export function Separator(props: SeparatorProps): JSX.Element {
+export const Separator = (props: SeparatorProps): JSX.Element => {
   const [local, rest] = splitProps(props, ['class', 'orientation']);
   return (
     <SeparatorPrimitive.Root
@@ -21,4 +21,4 @@ export function Separator(props: SeparatorProps): JSX.Element {
       {...rest}
     />
   );
-}
+};

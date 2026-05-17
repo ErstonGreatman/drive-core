@@ -4,7 +4,7 @@ export type Theme = 'light' | 'dark' | 'system';
 
 const STORAGE_KEY = 'drive-core-theme';
 
-function getStoredTheme(): Theme {
+const getStoredTheme = (): Theme => {
   try {
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored === 'light' || stored === 'dark' || stored === 'system') { return stored; }
@@ -12,20 +12,20 @@ function getStoredTheme(): Theme {
     // localStorage unavailable
   }
   return 'system';
-}
+};
 
-function applyThemeToDOM(theme: Theme): void {
+const applyThemeToDOM = (theme: Theme): void => {
   const html = document.documentElement;
   html.classList.add('theme-transitioning');
   html.classList.remove('light', 'dark');
   if (theme === 'light') { html.classList.add('light'); }
   else if (theme === 'dark') { html.classList.add('dark'); }
   setTimeout(() => html.classList.remove('theme-transitioning'), 300);
-}
+};
 
 const [theme, setThemeSignal] = createSignal<Theme>(getStoredTheme());
 
-export function setTheme(newTheme: Theme): void {
+export const setTheme = (newTheme: Theme): void => {
   try {
     localStorage.setItem(STORAGE_KEY, newTheme);
   } catch {
@@ -33,6 +33,6 @@ export function setTheme(newTheme: Theme): void {
   }
   setThemeSignal(newTheme);
   applyThemeToDOM(newTheme);
-}
+};
 
 export { theme };

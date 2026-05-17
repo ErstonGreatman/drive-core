@@ -4,7 +4,7 @@ import { useParams } from '@solidjs/router';
 import { viewerState } from '~/stores/viewer.ts';
 import { MechaSheetView } from '../mecha/MechaSheet';
 
-export default function ViewerMechaSheet(): JSX.Element {
+const ViewerMechaSheet = (): JSX.Element => {
   const params = useParams<{ id: string }>();
   const mecha = () => viewerState.mecha.find((m) => m.id === params.id);
 
@@ -22,4 +22,6 @@ export default function ViewerMechaSheet(): JSX.Element {
       )}
     </Show>
   );
-}
+};
+
+export default ViewerMechaSheet;

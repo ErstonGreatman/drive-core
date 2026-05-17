@@ -4,7 +4,7 @@ import changelogRaw from '../../CHANGELOG.md?raw';
 
 const html = marked.parse(changelogRaw);
 
-export default function Changelog(): JSX.Element {
+const Changelog = (): JSX.Element => {
   return (
     <div class="flex-1 overflow-y-auto py-8 pr-4 min-h-0">
       <div
@@ -24,4 +24,6 @@ export default function Changelog(): JSX.Element {
       />
     </div>
   );
-}
+};
+
+export default Changelog;
