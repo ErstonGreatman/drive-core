@@ -1,5 +1,5 @@
 import type { JSX } from 'solid-js';
-import { createSignal, For, Show } from 'solid-js';
+import { createSignal, Show } from 'solid-js';
 import type { Mecha, MechaUpgrade, MechaSubUpgrade, MechaWeapon } from '~/types/mecha';
 import type { UpgradeTemplateDefinition, WeaponTemplateDefinition } from '~/data';
 import { upgradeTemplatesById, weaponTemplatesById } from '~/data';
@@ -11,6 +11,7 @@ import { cn } from '~/lib/utils';
 import * as DialogPrimitive from '@kobalte/core/dialog';
 import { SUB_POOL_CAPACITY, cloneUpgrade, cloneSubWeapon, cloneSubUpgrade, subItemsUsedMP } from './upgradeUtils';
 import { PoolItemBrowser } from './PoolItemBrowser';
+import { SortableList } from '~/components/SortableList';
 
 interface SubPoolModalProps {
   mecha: Mecha;
@@ -84,6 +85,14 @@ export const SubPoolModal = (props: SubPoolModalProps): JSX.Element => {
     }));
   };
 
+  const handleReorderWeapons = (newWeapons: MechaWeapon[]): void => {
+    patchSubItems(({ upgrades }) => ({ weapons: newWeapons, upgrades }));
+  };
+
+  const handleReorderUpgrades = (newUpgrades: MechaSubUpgrade[]): void => {
+    patchSubItems(({ weapons }) => ({ weapons, upgrades: newUpgrades }));
+  };
+
   return (
     <>
       <button
@@ -135,14 +144,14 @@ export const SubPoolModal = (props: SubPoolModalProps): JSX.Element => {
                 <Show when={currentWeapons().length > 0}>
                   <div class="space-y-1.5">
                     <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Weapons</p>
-                    <For each={currentWeapons()}>
+                    <SortableList items={currentWeapons()} onReorder={handleReorderWeapons}>
                       {(w, i) => {
                         const tName = () => w.templateId ? weaponTemplatesById[w.templateId!]?.name : undefined;
                         return (
                           <div class="flex items-start gap-1.5">
                             <div class="flex-1 min-w-0">
                               <Input value={w.name} onBlur={(e) => handleWeaponNameBlur(e, i())} class="-mx-1 h-auto py-0 px-1 text-xs font-medium border-transparent shadow-none hover:border-input" />
-                              <Show when={tName() && tName() !== w.name}>
+                              <Show when={tName()}>
                                 <p class="text-[10px] text-muted-foreground leading-none mt-0.5">{tName()}</p>
                               </Show>
                             </div>
@@ -151,21 +160,21 @@ export const SubPoolModal = (props: SubPoolModalProps): JSX.Element => {
                           </div>
                         );
                       }}
-                    </For>
+                    </SortableList>
                   </div>
                 </Show>
 
                 <Show when={currentUpgrades().length > 0}>
                   <div class="space-y-1.5">
                     <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Upgrades</p>
-                    <For each={currentUpgrades()}>
+                    <SortableList items={currentUpgrades()} onReorder={handleReorderUpgrades}>
                       {(u, i) => {
                         const tName = () => u.templateId ? upgradeTemplatesById[u.templateId!]?.name : undefined;
                         return (
                           <div class="flex items-start gap-1.5">
                             <div class="flex-1 min-w-0">
                               <Input value={u.name} onBlur={(e) => handleUpgradeNameBlur(e, i())} class="-mx-1 h-auto py-0 px-1 text-xs font-medium border-transparent shadow-none hover:border-input" />
-                              <Show when={tName() && tName() !== u.name}>
+                              <Show when={tName()}>
                                 <p class="text-[10px] text-muted-foreground leading-none mt-0.5">{tName()}</p>
                               </Show>
                             </div>
@@ -174,7 +183,7 @@ export const SubPoolModal = (props: SubPoolModalProps): JSX.Element => {
                           </div>
                         );
                       }}
-                    </For>
+                    </SortableList>
                   </div>
                 </Show>
               </div>

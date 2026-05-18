@@ -15,6 +15,7 @@ import {
   isAttrSelected, isSwapComplete, isAttrDisabled, nextSwapState,
 } from './upgradeUtils';
 import { PoolItemBrowser } from './PoolItemBrowser';
+import { SortableList } from '~/components/SortableList';
 
 interface FormPoolModalProps {
   mecha: Mecha;
@@ -133,6 +134,14 @@ export const FormPoolModal = (props: FormPoolModalProps): JSX.Element => {
     }));
   };
 
+  const handleReorderWeapons = (newWeapons: MechaWeapon[]): void => {
+    patchActivePool((p) => ({ ...p, weapons: newWeapons }));
+  };
+
+  const handleReorderUpgrades = (newUpgrades: MechaSubUpgrade[]): void => {
+    patchActivePool((p) => ({ ...p, upgrades: newUpgrades }));
+  };
+
   return (
     <>
       <button
@@ -245,14 +254,14 @@ export const FormPoolModal = (props: FormPoolModalProps): JSX.Element => {
                 <Show when={(pool()?.weapons.length ?? 0) > 0}>
                   <div class="space-y-1.5">
                     <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Weapons</p>
-                    <For each={pool()?.weapons ?? []}>
+                    <SortableList items={pool()?.weapons ?? []} onReorder={handleReorderWeapons}>
                       {(w, i) => {
                         const tName = () => w.templateId ? weaponTemplatesById[w.templateId!]?.name : undefined;
                         return (
                           <div class="flex items-start gap-1.5">
                             <div class="flex-1 min-w-0">
                               <Input value={w.name} onBlur={(e) => handleWeaponNameBlur(e, i())} class="-mx-1 h-auto py-0 px-1 text-xs font-medium border-transparent shadow-none hover:border-input" />
-                              <Show when={tName() && tName() !== w.name}>
+                              <Show when={tName()}>
                                 <p class="text-[10px] text-muted-foreground leading-none mt-0.5">{tName()}</p>
                               </Show>
                             </div>
@@ -261,21 +270,21 @@ export const FormPoolModal = (props: FormPoolModalProps): JSX.Element => {
                           </div>
                         );
                       }}
-                    </For>
+                    </SortableList>
                   </div>
                 </Show>
 
                 <Show when={(pool()?.upgrades.length ?? 0) > 0}>
                   <div class="space-y-1.5">
                     <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">Upgrades</p>
-                    <For each={pool()?.upgrades ?? []}>
+                    <SortableList items={pool()?.upgrades ?? []} onReorder={handleReorderUpgrades}>
                       {(u, i) => {
                         const tName = () => u.templateId ? upgradeTemplatesById[u.templateId!]?.name : undefined;
                         return (
                           <div class="flex items-start gap-1.5">
                             <div class="flex-1 min-w-0">
                               <Input value={u.name} onBlur={(e) => handleUpgradeNameBlur(e, i())} class="-mx-1 h-auto py-0 px-1 text-xs font-medium border-transparent shadow-none hover:border-input" />
-                              <Show when={tName() && tName() !== u.name}>
+                              <Show when={tName()}>
                                 <p class="text-[10px] text-muted-foreground leading-none mt-0.5">{tName()}</p>
                               </Show>
                             </div>
@@ -284,7 +293,7 @@ export const FormPoolModal = (props: FormPoolModalProps): JSX.Element => {
                           </div>
                         );
                       }}
-                    </For>
+                    </SortableList>
                   </div>
                 </Show>
 

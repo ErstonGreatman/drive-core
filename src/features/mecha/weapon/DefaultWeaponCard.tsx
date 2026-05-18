@@ -1,5 +1,4 @@
 import type { JSX } from 'solid-js';
-import { Show } from 'solid-js';
 import type { Mecha } from '~/types/mecha';
 import type { WeaponTemplateDefinition } from '~/data';
 import { updateMecha } from '~/stores/mecha';
@@ -31,16 +30,12 @@ export const DefaultWeaponCard = (props: DefaultWeaponCardProps): JSX.Element =>
 
   return (
     <div class="p-3 rounded-lg border border-border/60 bg-muted/30">
-      <div class="flex items-center gap-1.5 flex-wrap mb-0.5">
-        <Input
-          value={displayName()}
-          onBlur={handleNameBlur}
-          class="-mx-1 h-auto py-0 px-1 text-sm font-medium border-transparent shadow-none hover:border-input bg-transparent"
-        />
-        <Show when={displayName() !== props.def.name}>
-          <p class="text-[11px] text-muted-foreground">{props.def.name}</p>
-        </Show>
-      </div>
+      <Input
+        value={displayName()}
+        onBlur={handleNameBlur}
+        class="-mx-1 h-auto py-0 px-1 text-sm font-medium border-transparent shadow-none hover:border-input bg-transparent"
+      />
+      <p class="text-[11px] text-muted-foreground mb-0.5">{props.def.name}</p>
       <div class="flex items-center gap-1.5 flex-wrap mb-1">
         <Badge variant="secondary" class="text-[10px] px-1.5 py-0 font-mono">Free</Badge>
         <KeywordBadges keywords={props.def.keywords} />

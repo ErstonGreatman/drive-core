@@ -78,7 +78,7 @@ export const TakenUpgradeCard = (props: TakenUpgradeCardProps): JSX.Element => {
       <div class="flex items-start gap-2">
         <div class="flex-1 min-w-0">
           <Input value={props.upgrade.name} onBlur={handleNameBlur} class="-mx-1 mb-0.5 h-auto py-0 px-1 text-sm font-medium border-transparent shadow-none hover:border-input" />
-          <Show when={props.def && props.upgrade.name !== props.def.name}>
+          <Show when={props.def}>
             <p class="text-[11px] text-muted-foreground mb-0.5">{props.def!.name}</p>
           </Show>
           <div class="flex items-center gap-1.5 flex-wrap">

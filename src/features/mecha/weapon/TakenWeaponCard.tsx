@@ -58,7 +58,7 @@ export const TakenWeaponCard = (props: TakenWeaponCardProps): JSX.Element => {
             onBlur={handleNameBlur}
             class="-mx-1 mb-1 h-auto py-0 px-1 text-sm font-medium border-transparent shadow-none hover:border-input"
           />
-          <Show when={baseName() && baseName() !== props.weapon.name}>
+          <Show when={baseName()}>
             <p class="text-[11px] text-muted-foreground mb-2">{baseName()}</p>
           </Show>
           <div class="flex items-center gap-1.5 flex-wrap">

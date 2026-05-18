@@ -1,7 +1,8 @@
 import type { JSX } from 'solid-js';
 import { createSignal, For, Show } from 'solid-js';
-import type { Mecha } from '~/types/mecha';
+import type { Mecha, MechaWeapon } from '~/types/mecha';
 import { weaponTemplates } from '~/data';
+import { updateMecha } from '~/stores/mecha';
 import { Button } from '~/components/ui/button';
 import { Input } from '~/components/ui/input';
 import { Separator } from '~/components/ui/separator';
@@ -12,6 +13,7 @@ import { DefaultWeaponCard } from './weapon/DefaultWeaponCard';
 import { TakenWeaponCard } from './weapon/TakenWeaponCard';
 import { WeaponRow } from './weapon/WeaponRow';
 import { CustomWeaponBuilder } from './weapon/CustomWeaponBuilder';
+import { SortableList } from '~/components/SortableList';
 
 interface WeaponTabProps {
   mecha: Mecha;
@@ -25,7 +27,9 @@ export const WeaponTab = (props: WeaponTabProps): JSX.Element => {
   const [search, setSearch] = createSignal('');
   const [builderOpen, setBuilderOpen] = createSignal(false);
 
-  const takenWeapons = () => props.mecha.weapons.map((w, i) => ({ weapon: w, index: i }));
+  const handleReorderWeapons = (newWeapons: MechaWeapon[]): void => {
+    updateMecha(props.mecha.id, { weapons: newWeapons });
+  };
 
   const filteredAvailable = () => {
     const q = search().toLowerCase();
@@ -51,15 +55,15 @@ export const WeaponTab = (props: WeaponTabProps): JSX.Element => {
 
       <Separator />
 
-      <Show when={takenWeapons().length > 0}>
+      <Show when={props.mecha.weapons.length > 0}>
         <div class="space-y-2">
           <h3 class="text-sm font-semibold">Equipped</h3>
           <div class="space-y-3">
-            <For each={takenWeapons()}>
-              {({ weapon, index }) => (
-                <TakenWeaponCard mecha={props.mecha} weapon={weapon} index={index} />
+            <SortableList items={props.mecha.weapons} onReorder={handleReorderWeapons}>
+              {(weapon, i) => (
+                <TakenWeaponCard mecha={props.mecha} weapon={weapon} index={i()} />
               )}
-            </For>
+            </SortableList>
           </div>
         </div>
         <Separator />

@@ -1,13 +1,15 @@
 import type { JSX } from 'solid-js';
 import { createSignal, For, Show } from 'solid-js';
-import type { Mecha } from '~/types/mecha';
-import type { UpgradeType } from '~/types/mecha';
+import type { Mecha, MechaUpgrade, UpgradeType } from '~/types/mecha';
 import { upgradeTemplates, upgradeTemplatesById } from '~/data';
 import type { UpgradeTemplateDefinition } from '~/data';
+import { updateMecha } from '~/stores/mecha';
 import { Separator } from '~/components/ui/separator';
 import { cn } from '~/lib/utils';
+import { cloneUpgrade } from './upgrade/upgradeUtils';
 import { TakenUpgradeCard } from './upgrade/TakenUpgradeCard';
 import { UpgradeRow } from './upgrade/UpgradeRow';
+import { SortableList } from '~/components/SortableList';
 
 interface UpgradeTabProps {
   mecha: Mecha;
@@ -34,10 +36,20 @@ export const UpgradeTab = (props: UpgradeTabProps): JSX.Element => {
 
   const takenInType = () =>
     props.mecha.upgrades
-      .map((u, i) => ({ upgrade: u, def: upgradeTemplatesById[u.templateId ?? ''], index: i }))
+      .map((u, i) => ({ id: u.id, upgrade: u, def: upgradeTemplatesById[u.templateId ?? ''], index: i }))
       .filter((x): x is typeof x & { def: UpgradeTemplateDefinition } =>
         !!x.def && x.upgrade.upgradeType === activeType()
       );
+
+  const handleReorderUpgrades = (reorderedItems: Array<{ upgrade: MechaUpgrade; index: number }>): void => {
+    const all = props.mecha.upgrades.map(cloneUpgrade);
+    const typeIndices = all.reduce<number[]>((acc, u, i) => {
+      if (u.upgradeType === activeType()) { acc.push(i); }
+      return acc;
+    }, []);
+    typeIndices.forEach((origIdx, pos) => { all[origIdx] = cloneUpgrade(reorderedItems[pos].upgrade); });
+    updateMecha(props.mecha.id, { upgrades: all });
+  };
 
   const availableBySubcategory = () => {
     const byType = upgradeTemplates.filter((t) => t.upgradeType === activeType());
@@ -86,11 +98,11 @@ export const UpgradeTab = (props: UpgradeTabProps): JSX.Element => {
         <div class="space-y-2">
           <h3 class="text-sm font-semibold">Installed</h3>
           <div class="space-y-3">
-            <For each={takenInType()}>
+            <SortableList items={takenInType()} onReorder={handleReorderUpgrades}>
               {({ upgrade, def, index }) => (
                 <TakenUpgradeCard mecha={props.mecha} upgrade={upgrade} index={index} def={def} hasSuperiorMorphing={hasSuperiorMorphing()} />
               )}
-            </For>
+            </SortableList>
           </div>
         </div>
         <Separator />
