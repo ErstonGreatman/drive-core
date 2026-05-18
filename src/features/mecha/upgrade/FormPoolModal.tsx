@@ -200,36 +200,43 @@ export const FormPoolModal = (props: FormPoolModalProps): JSX.Element => {
                   {usedMP()} / {FORM_POOL_CAPACITY} MP
                 </p>
 
-                <div class="space-y-1.5">
-                  <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
-                    Attribute Swap {isSwapComplete(swapAttrs()) ? ':' : '(optional)'}
-                  </p>
-                  <div class="flex gap-1 flex-wrap">
-                    <For each={SWAP_ATTR_OPTIONS}>
-                      {(attr) => (
-                        <button
-                          onClick={() => handleSwapToggle(attr)}
-                          disabled={isAttrDisabled(swapAttrs(), attr)}
-                          class={cn(
-                            'text-xs px-2 py-0.5 rounded border transition-colors capitalize',
-                            isAttrSelected(swapAttrs(), attr) ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:border-foreground',
-                            isAttrDisabled(swapAttrs(), attr) && 'opacity-40 cursor-not-allowed',
-                          )}
-                        >
-                          {attr}
+                <Show
+                  when={poolIdx() !== 0}
+                  fallback={
+                    <p class="text-xs text-muted-foreground italic">Base Form — no attribute swap.</p>
+                  }
+                >
+                  <div class="space-y-1.5">
+                    <p class="text-[10px] font-medium text-muted-foreground uppercase tracking-wide">
+                      Attribute Swap {isSwapComplete(swapAttrs()) ? ':' : '(optional)'}
+                    </p>
+                    <div class="flex gap-1 flex-wrap">
+                      <For each={SWAP_ATTR_OPTIONS}>
+                        {(attr) => (
+                          <button
+                            onClick={() => handleSwapToggle(attr)}
+                            disabled={isAttrDisabled(swapAttrs(), attr)}
+                            class={cn(
+                              'text-xs px-2 py-0.5 rounded border transition-colors capitalize',
+                              isAttrSelected(swapAttrs(), attr) ? 'bg-primary text-primary-foreground border-primary' : 'border-border text-muted-foreground hover:border-foreground',
+                              isAttrDisabled(swapAttrs(), attr) && 'opacity-40 cursor-not-allowed',
+                            )}
+                          >
+                            {attr}
+                          </button>
+                        )}
+                      </For>
+                      <Show when={swapAttrs()}>
+                        <button onClick={() => patchActivePool((p) => ({ ...p, swapAttributes: undefined }))} class="text-xs px-2 py-0.5 rounded border border-border text-muted-foreground hover:border-destructive hover:text-destructive transition-colors">
+                          Clear
                         </button>
-                      )}
-                    </For>
-                    <Show when={swapAttrs()}>
-                      <button onClick={() => patchActivePool((p) => ({ ...p, swapAttributes: undefined }))} class="text-xs px-2 py-0.5 rounded border border-border text-muted-foreground hover:border-destructive hover:text-destructive transition-colors">
-                        Clear
-                      </button>
+                      </Show>
+                    </div>
+                    <Show when={isSwapComplete(swapAttrs())}>
+                      <p class="text-xs text-primary">{cap(swapAttrs()![0])} ↔ {cap(swapAttrs()![1])}</p>
                     </Show>
                   </div>
-                  <Show when={isSwapComplete(swapAttrs())}>
-                    <p class="text-xs text-primary">{cap(swapAttrs()![0])} ↔ {cap(swapAttrs()![1])}</p>
-                  </Show>
-                </div>
+                </Show>
 
                 <Show when={(pool()?.weapons.length ?? 0) === 0 && (pool()?.upgrades.length ?? 0) === 0}>
                   <p class="text-xs text-muted-foreground italic">Nothing added yet.</p>
