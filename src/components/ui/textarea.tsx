@@ -4,7 +4,7 @@ import { cn } from '~/lib/utils';
 
 export type TextareaProps = JSX.TextareaHTMLAttributes<HTMLTextAreaElement> & { class?: string };
 
-export function Textarea(props: TextareaProps): JSX.Element {
+export const Textarea = (props: TextareaProps): JSX.Element => {
   const [local, rest] = splitProps(props, ['class']);
   return (
     <textarea
@@ -18,4 +18,4 @@ export function Textarea(props: TextareaProps): JSX.Element {
       {...rest}
     />
   );
-}
+};

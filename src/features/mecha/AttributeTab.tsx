@@ -22,22 +22,22 @@ const ATTRIBUTE_ROWS: { key: AttrKey; label: string; description: string }[] = [
   { key: 'speed', label: 'Speed', description: 'Movement Zones available per Action.' },
 ];
 
-export function AttributeTab(props: AttributeTabProps): JSX.Element {
-  function handleIncrement(key: AttrKey): void {
+export const AttributeTab = (props: AttributeTabProps): JSX.Element => {
+  const handleIncrement = (key: AttrKey): void => {
     const current = props.mecha.attributes[key];
     if (current >= 10) { return; }
     const newAttrs: MechaAttributes = { ...props.mecha.attributes, [key]: current + 1 };
     const newSpent = computeSpentMP(newAttrs, props.mecha.weapons, props.mecha.upgrades);
     updateMecha(props.mecha.id, { attributes: newAttrs, spentMP: newSpent });
-  }
+  };
 
-  function handleDecrement(key: AttrKey): void {
+  const handleDecrement = (key: AttrKey): void => {
     const current = props.mecha.attributes[key];
     if (current <= 0) { return; }
     const newAttrs: MechaAttributes = { ...props.mecha.attributes, [key]: current - 1 };
     const newSpent = computeSpentMP(newAttrs, props.mecha.weapons, props.mecha.upgrades);
     updateMecha(props.mecha.id, { attributes: newAttrs, spentMP: newSpent });
-  }
+  };
 
   return (
     <div class="space-y-0 pt-4">

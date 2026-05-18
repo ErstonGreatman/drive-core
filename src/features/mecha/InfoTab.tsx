@@ -11,28 +11,28 @@ interface InfoTabProps {
   mecha: Mecha;
 }
 
-export function InfoTab(props: InfoTabProps): JSX.Element {
-  function handleDescBlur(e: FocusEvent): void {
+export const InfoTab = (props: InfoTabProps): JSX.Element => {
+  const handleDescBlur = (e: FocusEvent): void => {
     const value = (e.currentTarget as HTMLTextAreaElement).value.trim();
     if (value !== (props.mecha.description ?? '')) {
       updateMecha(props.mecha.id, { description: value || undefined });
     }
-  }
+  };
 
-  function handleTagBlur(e: FocusEvent): void {
+  const handleTagBlur = (e: FocusEvent): void => {
     const value = (e.currentTarget as HTMLInputElement).value.trim();
     if (value !== (props.mecha.campaignTag ?? '')) {
       updateMecha(props.mecha.id, { campaignTag: value || undefined });
     }
-  }
+  };
 
-  function handleBonusMPBlur(e: FocusEvent): void {
+  const handleBonusMPBlur = (e: FocusEvent): void => {
     const raw = (e.currentTarget as HTMLInputElement).value.trim();
     const value = Math.max(0, parseInt(raw, 10) || 0);
     if (value !== props.mecha.bonusMP) {
       updateMecha(props.mecha.id, { bonusMP: value });
     }
-  }
+  };
 
   return (
     <div class="space-y-6 pt-4">

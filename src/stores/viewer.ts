@@ -7,18 +7,18 @@ export const [viewerState, setViewerState] = makePersisted(
   { name: 'drive-core:viewer' },
 );
 
-export function addViewerPilot(pilot: Pilot): void {
+export const addViewerPilot = (pilot: Pilot): void => {
   setViewerState('pilots', (prev) => [...prev, pilot]);
-}
+};
 
-export function removeViewerPilot(id: string): void {
+export const removeViewerPilot = (id: string): void => {
   setViewerState('pilots', (prev) => prev.filter((p) => p.id !== id));
-}
+};
 
-export function addViewerMecha(mecha: Mecha): void {
+export const addViewerMecha = (mecha: Mecha): void => {
   setViewerState('mecha', (prev) => [...prev, mecha]);
-}
+};
 
-export function removeViewerMecha(id: string): void {
+export const removeViewerMecha = (id: string): void => {
   setViewerState('mecha', (prev) => prev.filter((m) => m.id !== id));
-}
+};

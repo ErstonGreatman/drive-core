@@ -8,7 +8,7 @@ export const [pilotState, setPilotState] = makePersisted(
   { name: 'drive-core:pilots' },
 );
 
-export function createDefaultPilot(): Pilot {
+export const createDefaultPilot = (): Pilot => {
   const now = new Date().toISOString();
   return {
     id: crypto.randomUUID(),
@@ -39,13 +39,13 @@ export function createDefaultPilot(): Pilot {
     createdAt: now,
     updatedAt: now,
   };
-}
+};
 
-export function addPilot(pilot: Pilot): void {
+export const addPilot = (pilot: Pilot): void => {
   setPilotState('pilots', (prev) => [...prev, pilot]);
-}
+};
 
-export function updatePilot(id: string, updates: Partial<Pilot>): void {
+export const updatePilot = (id: string, updates: Partial<Pilot>): void => {
   const idx = pilotState.pilots.findIndex((p) => p.id === id);
   if (idx < 0) { return; }
   setPilotState(
@@ -53,8 +53,8 @@ export function updatePilot(id: string, updates: Partial<Pilot>): void {
     idx,
     reconcile({ ...pilotState.pilots[idx], ...updates, updatedAt: new Date().toISOString() }),
   );
-}
+};
 
-export function removePilot(id: string): void {
+export const removePilot = (id: string): void => {
   setPilotState('pilots', (prev) => prev.filter((p) => p.id !== id));
-}
+};

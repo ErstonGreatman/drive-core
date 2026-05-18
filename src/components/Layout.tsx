@@ -17,7 +17,7 @@ const SEG_ITEM = 'px-3 py-1 text-xs font-medium rounded-[5px] transition-colors'
 const SEG_ACTIVE = 'bg-background text-foreground shadow-sm';
 const SEG_INACTIVE = 'text-muted-foreground hover:text-foreground';
 
-export function Layout(props: LayoutProps): JSX.Element {
+export const Layout = (props: LayoutProps): JSX.Element => {
   const location = useLocation();
 
   const builderActive = () => {

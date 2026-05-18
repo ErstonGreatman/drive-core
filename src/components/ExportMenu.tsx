@@ -11,16 +11,16 @@ interface ExportMenuProps {
   compact?: boolean;
 }
 
-export function ExportMenu(props: ExportMenuProps): JSX.Element {
+export const ExportMenu = (props: ExportMenuProps): JSX.Element => {
   const [copied, setCopied] = createSignal(false);
   let copyTimer: ReturnType<typeof setTimeout> | undefined;
   onCleanup(() => clearTimeout(copyTimer));
 
-  function handleDownload(): void {
+  const handleDownload = (): void => {
     downloadJSON(props.data, props.filename);
-  }
+  };
 
-  function handleCopy(): void {
+  const handleCopy = (): void => {
     copyJSONToClipboard(props.data).then(() => {
       clearTimeout(copyTimer);
       setCopied(true);
@@ -28,7 +28,7 @@ export function ExportMenu(props: ExportMenuProps): JSX.Element {
     }).catch(() => {
       // Clipboard unavailable — nothing to do
     });
-  }
+  };
 
   return (
     <DropdownMenu.Root>

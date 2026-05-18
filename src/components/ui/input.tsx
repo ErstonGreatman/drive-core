@@ -4,7 +4,7 @@ import { cn } from '~/lib/utils';
 
 export type InputProps = JSX.InputHTMLAttributes<HTMLInputElement> & { class?: string };
 
-export function Input(props: InputProps): JSX.Element {
+export const Input = (props: InputProps): JSX.Element => {
   const [local, rest] = splitProps(props, ['class']);
   return (
     <input
@@ -18,4 +18,4 @@ export function Input(props: InputProps): JSX.Element {
       {...rest}
     />
   );
-}
+};

@@ -2,7 +2,7 @@ import type { JSX } from 'solid-js';
 import { Cpu, Github, ExternalLink, Scale } from 'lucide-solid';
 import { Card, CardContent, CardHeader, CardTitle } from '../components/ui/card';
 
-export default function About(): JSX.Element {
+const About = (): JSX.Element => {
   return (
     <div class="flex-1 overflow-y-auto py-8 min-h-0">
       <div class="max-w-2xl space-y-6">
@@ -132,4 +132,6 @@ export default function About(): JSX.Element {
       </div>
     </div>
   );
-}
+};
+
+export default About;

@@ -1,23 +1,27 @@
 import type { MechaAttributes } from '~/data/schemas/mecha-template';
 import type { MechaWeapon, MechaUpgrade } from '~/types/mecha';
 
-export function totalMP(bonusMP: number): number {
-  return 100 + bonusMP;
-}
+export const upgradeCostDisplay = (upgrade: MechaUpgrade): string => {
+  if (upgrade.templateId === 'invincible-super-combination') {
+    return `${upgrade.customMpCost ?? 0} MP`;
+  }
+  if (upgrade.templateId === 'superior-morphing') {
+    return `${20 + Math.max(0, (upgrade.formPools?.length ?? 2) - 2) * 10} MP`;
+  }
+  return upgrade.mpCost > 0 ? `${upgrade.mpCost} MP` : 'Free';
+};
 
-export function attributeCostToRank(rank: number): number {
-  return (rank * (rank + 1)) / 2;
-}
+export const totalMP = (bonusMP: number): number => 100 + bonusMP;
 
-export function attributeIncrementalCost(currentRank: number): number {
-  return currentRank + 1;
-}
+export const attributeCostToRank = (rank: number): number => (rank * (rank + 1)) / 2;
 
-export function computeSpentMP(
+export const attributeIncrementalCost = (currentRank: number): number => currentRank + 1;
+
+export const computeSpentMP = (
   attributes: MechaAttributes,
   weapons: MechaWeapon[],
   upgrades: MechaUpgrade[],
-): number {
+): number => {
   const attrCost = (Object.values(attributes) as number[]).reduce(
     (sum, rank) => sum + attributeCostToRank(rank),
     0,
@@ -37,4 +41,4 @@ export function computeSpentMP(
     return sum + baseCost;
   }, 0);
   return attrCost + weaponCost + upgradeCost;
-}
+};

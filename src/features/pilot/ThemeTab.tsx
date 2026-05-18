@@ -7,8 +7,8 @@ interface ThemeTabProps {
   pilot: Pilot;
 }
 
-export function ThemeTab(props: ThemeTabProps): JSX.Element {
-  function handleBlur(field: 'reason' | 'typecast' | 'bane', e: FocusEvent): void {
+export const ThemeTab = (props: ThemeTabProps): JSX.Element => {
+  const handleBlur = (field: 'reason' | 'typecast' | 'bane', e: FocusEvent): void => {
     const value = (e.currentTarget as HTMLTextAreaElement).value.trim();
     if (value !== props.pilot.genreThemes[field]) {
       updatePilot(props.pilot.id, {
@@ -20,7 +20,7 @@ export function ThemeTab(props: ThemeTabProps): JSX.Element {
         },
       });
     }
-  }
+  };
 
   return (
     <div class="space-y-6 max-w-lg">

@@ -14,7 +14,7 @@ const ViewerHome = lazy(() => import('./routes/viewer/ViewerHome'));
 const ViewerPilotSheet = lazy(() => import('./routes/viewer/ViewerPilotSheet'));
 const ViewerMechaSheet = lazy(() => import('./routes/viewer/ViewerMechaSheet'));
 
-export default function App(): JSX.Element {
+const App = (): JSX.Element => {
   return (
     <Router root={Layout}>
       <Route path="/" component={Home} />
@@ -29,4 +29,6 @@ export default function App(): JSX.Element {
       <Route path="/viewer/mecha/:id" component={ViewerMechaSheet} />
     </Router>
   );
-}
+};
+
+export default App;

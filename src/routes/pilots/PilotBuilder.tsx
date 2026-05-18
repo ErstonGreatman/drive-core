@@ -19,7 +19,7 @@ import { PowerTab } from '../../features/pilot/PowerTab';
 import { computeSpentCP, totalCP, powerLevel } from '~/lib/pilot-costs.ts';
 import { cn } from '~/lib/utils.ts';
 
-export default function PilotBuilder(): JSX.Element {
+const PilotBuilder = (): JSX.Element => {
   const params = useParams<{ id: string }>();
   const pilot = () => pilotState.pilots.find((p) => p.id === params.id);
 
@@ -34,14 +34,14 @@ export default function PilotBuilder(): JSX.Element {
   const defense = () => (pilot()?.attributes.awareness ?? 0) + 5;
   const plotArmorCap = () => (pilot()?.attributes.willpower ?? 0) * 3;
 
-  function handleNameBlur(e: FocusEvent): void {
+  const handleNameBlur = (e: FocusEvent): void => {
     const p = pilot();
     if (!p) { return; }
     const value = (e.currentTarget as HTMLInputElement).value.trim();
     if (value !== p.name) {
       updatePilot(p.id, { name: value || 'New Pilot' });
     }
-  }
+  };
 
   return (
     <Show
@@ -140,4 +140,6 @@ export default function PilotBuilder(): JSX.Element {
       )}
     </Show>
   );
-}
+};
+
+export default PilotBuilder;

@@ -26,8 +26,8 @@ const ATTRIBUTES: { key: PilotAttributeKey; label: string; description: string }
   { key: 'resources', label: 'Resources', description: 'Money, contacts, and influence. Can substitute for almost any skill.' },
 ];
 
-export function AttributeTab(props: AttributeTabProps): JSX.Element {
-  function attrTotalCost(): number {
+export const AttributeTab = (props: AttributeTabProps): JSX.Element => {
+  const attrTotalCost = (): number => {
     const a = props.pilot.attributes;
     return (
       attributeCostToRank(a.fitness) +
@@ -37,9 +37,9 @@ export function AttributeTab(props: AttributeTabProps): JSX.Element {
       attributeCostToRank(a.charm) +
       attributeCostToRank(a.resources)
     );
-  }
+  };
 
-  function handleChange(key: PilotAttributeKey, delta: number): void {
+  const handleChange = (key: PilotAttributeKey, delta: number): void => {
     const current = props.pilot.attributes[key];
     const next = current + delta;
     if (next < 0 || next > 10) { return; }
