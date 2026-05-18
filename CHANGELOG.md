@@ -3,8 +3,6 @@
 All notable changes to Drive Core are documented here.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
-## [Unreleased]
-
 ## [0.2.1] - 2026-05-17
 
 ### Changed
